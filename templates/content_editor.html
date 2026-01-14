@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Content Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .file-upload-section {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid #2196F3;
+            text-align: center;
+        }
+        .file-upload-section input[type="file"] {
+            display: none;
+        }
+        .file-upload-btn {
+            background: #2196F3;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: bold;
+        }
+        .file-upload-btn:hover {
+            background: #0b7dda;
+        }
+        .global-controls {
+            background: #fff3e0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid #FF9800;
+        }
+        .global-controls h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .control-row label {
+            min-width: 140px;
+            font-weight: bold;
+        }
+        .control-row select {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        .control-row button {
+            padding: 8px 20px;
+            background: #FF9800;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .control-row button:hover {
+            background: #F57C00;
+        }
+        .randomize-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .randomize-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: #9C27B0;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .randomize-btn:hover {
+            background: #7B1FA2;
+        }
+        .content-block {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .content-block.processing {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        .block-id {
+            font-weight: bold;
+            color: #333;
+        }
+        .block-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .video-dropdown, .speed-dropdown, .voice-dropdown {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 12px;
+            max-width: 150px;
+        }
+        .remove-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .remove-btn:hover {
+            background: #d32f2f;
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+        }
+        .add-block-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: block;
+            margin: 20px auto;
+            width: 60px;
+            height: 60px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .add-block-btn:hover {
+            background: #45a049;
+        }
+        .action-buttons {
+            position: sticky;
+            top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+            margin-bottom: 20px;
+        }
+        .action-buttons button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            flex: 1;
+        }
+        .ai-enhance-btn {
+            background: #9C27B0;
+            color: white;
+        }
+        .ai-enhance-btn:hover {
+            background: #7B1FA2;
+        }
+        .ai-enhance-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .process-btn {
+            background: #FF9800;
+            color: white;
+        }
+        .process-btn:hover {
+            background: #F57C00;
+        }
+        .process-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 6px;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            display: block;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📝 Content Editor</h1>
+        <p>Load a text file or enter content manually, then enhance with AI or process directly.</p>
+    </div>
+
+    <div class="file-upload-section">
+        <label for="file-input" class="file-upload-btn">
+            📁 Select Text File (.txt)
+        </label>
+        <input type="file" id="file-input" accept=".txt" onchange="handleFileUpload()">
+        <div id="file-name" style="margin-top: 10px; color: #666;"></div>
+    </div>
+
+    <div class="global-controls">
+        <h3>🎛️ Global Controls</h3>
+        
+        <div class="control-row">
+            <label>🎬 Background for All:</label>
+            <select id="global-background">
+                {% for bg in backgrounds %}
+                <option value="{{ bg }}">{{ bg }}</option>
+                {% endfor %}
+            </select>
+            <button onclick="applyBackgroundToAll()">Apply to All</button>
+        </div>
+        
+        <div class="control-row">
+            <label>🎤 Voice for All:</label>
+            <select id="global-voice">
+                {% for voice in voices %}
+                <option value="{{ voice.filename }}">{{ voice.display_name }}</option>
+                {% endfor %}
+            </select>
+            <button onclick="applyVoiceToAll()">Apply to All</button>
+        </div>
+        
+        <div class="randomize-buttons">
+            <button class="randomize-btn" onclick="randomizeVideos()">🎲 Randomize Videos</button>
+            <button class="randomize-btn" onclick="randomizeVoices()">🎲 Randomize Voices</button>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="ai-enhance-btn" id="ai-enhance-btn" onclick="aiEnhance()">
+            ✨ AI Enhance
+        </button>
+        <button class="process-btn" id="process-btn" onclick="processContent()">
+            ▶️ Process
+        </button>
+    </div>
+
+    <div id="status" class="status"></div>
+
+    <div id="blocks-container">
+        <!-- Initial empty block -->
+        <div class="content-block" data-block-id="1">
+            <div class="block-header">
+                <span class="block-id">Block 1</span>
+                <div class="block-controls">
+                    <select class="video-dropdown">
+                        {% for bg in backgrounds %}
+                        <option value="{{ bg }}" {% if bg == default_background %}selected{% endif %}>🎬 {{ bg }}</option>
+                        {% endfor %}
+                    </select>
+                    <select class="voice-dropdown">
+                        {% for voice in voices %}
+                        <option value="{{ voice.filename }}" {% if voice.filename == default_voice %}selected{% endif %}>🎤 {{ voice.display_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <select class="speed-dropdown">
+                        <option value="0.8">🐢 0.8x</option>
+                        <option value="0.9">🐌 0.9x</option>
+                        <option value="1.0" selected>▶️ 1.0x</option>
+                        <option value="1.1">⚡ 1.1x</option>
+                        <option value="1.2">🚀 1.2x</option>
+                    </select>
+                    <button class="remove-btn" onclick="removeBlock(1)" style="display: none;">🗑️</button>
+                </div>
+            </div>
+            <textarea placeholder="Enter your content here... Each line will be a separate caption."></textarea>
+        </div>
+    </div>
+
+    <button class="add-block-btn" onclick="addBlock()">➕</button>
+
+    <script>
+        let blockCounter = 1;
+        let backgrounds = {{ backgrounds|tojson }};
+        let voices = {{ voices|tojson }};
+        let defaultBackground = "{{ default_background }}";
+        let defaultVoice = "{{ default_voice }}";
+
+        function applyBackgroundToAll() {
+            const selectedBg = document.getElementById('global-background').value;
+            document.querySelectorAll('.video-dropdown').forEach(dropdown => {
+                dropdown.value = selectedBg;
+            });
+            showStatus(`Applied "${selectedBg}" to all blocks`, 'success');
+        }
+
+        function applyVoiceToAll() {
+            const selectedVoice = document.getElementById('global-voice').value;
+            const voiceName = voices.find(v => v.filename === selectedVoice)?.display_name || selectedVoice;
+            document.querySelectorAll('.voice-dropdown').forEach(dropdown => {
+                dropdown.value = selectedVoice;
+            });
+            showStatus(`Applied "${voiceName}" to all blocks`, 'success');
+        }
+
+        function randomizeVideos() {
+            if (backgrounds.length === 0) {
+                showStatus('No backgrounds available', 'error');
+                return;
+            }
+            
+            document.querySelectorAll('.video-dropdown').forEach(dropdown => {
+                const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+                dropdown.value = randomBg;
+            });
+            showStatus('Randomized all background videos', 'success');
+        }
+
+        function randomizeVoices() {
+            if (voices.length === 0) {
+                showStatus('No voices available', 'error');
+                return;
+            }
+            
+            document.querySelectorAll('.voice-dropdown').forEach(dropdown => {
+                const randomVoice = voices[Math.floor(Math.random() * voices.length)];
+                dropdown.value = randomVoice.filename;
+            });
+            showStatus('Randomized all voices', 'success');
+        }
+
+        function handleFileUpload() {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+            
+            document.getElementById('file-name').textContent = `Loading: ${file.name}...`;
+            showStatus('Processing file...', 'info');
+            setProcessing(true);
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            fetch('/upload-file', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('file-name').textContent = `Loaded: ${file.name}`;
+                    loadSnippets(data.snippets);
+                    showStatus(`Loaded ${data.snippets.length} blocks from file`, 'success');
+                } else {
+                    showStatus(data.message, 'error');
+                }
+                setProcessing(false);
+            })
+            .catch(error => {
+                showStatus('Error uploading file', 'error');
+                setProcessing(false);
+            });
+        }
+
+        function loadSnippets(snippets) {
+            const container = document.getElementById('blocks-container');
+            container.innerHTML = '';
+            blockCounter = 0;
+            
+            snippets.forEach(snippet => {
+                blockCounter++;
+                const blockHtml = createBlockHtml(blockCounter, snippet.text);
+                container.insertAdjacentHTML('beforeend', blockHtml);
+            });
+        }
+
+        function createBlockHtml(id, text = '') {
+            const bgOptions = backgrounds.map(bg => 
+                `<option value="${bg}" ${bg === defaultBackground ? 'selected' : ''}>🎬 ${bg}</option>`
+            ).join('');
+            
+            const voiceOptions = voices.map(voice => 
+                `<option value="${voice.filename}" ${voice.filename === defaultVoice ? 'selected' : ''}>🎤 ${voice.display_name}</option>`
+            ).join('');
+            
+            return `
+                <div class="content-block" data-block-id="${id}">
+                    <div class="block-header">
+                        <span class="block-id">Block ${id}</span>
+                        <div class="block-controls">
+                            <select class="video-dropdown">${bgOptions}</select>
+                            <select class="voice-dropdown">${voiceOptions}</select>
+                            <select class="speed-dropdown">
+                                <option value="0.8">🐢 0.8x</option>
+                                <option value="0.9">🐌 0.9x</option>
+                                <option value="1.0" selected>▶️ 1.0x</option>
+                                <option value="1.1">⚡ 1.1x</option>
+                                <option value="1.2">🚀 1.2x</option>
+                            </select>
+                            <button class="remove-btn" onclick="removeBlock(${id})">🗑️</button>
+                        </div>
+                    </div>
+                    <textarea placeholder="Enter your content here... Each line will be a separate caption.">${text}</textarea>
+                </div>
+            `;
+        }
+
+        function addBlock() {
+            blockCounter++;
+            const container = document.getElementById('blocks-container');
+            const blockHtml = createBlockHtml(blockCounter);
+            container.insertAdjacentHTML('beforeend', blockHtml);
+            
+            updateRemoveButtons();
+        }
+
+        function removeBlock(id) {
+            const blocks = document.querySelectorAll('.content-block');
+            if (blocks.length <= 1) {
+                showStatus('Cannot remove the last block', 'error');
+                return;
+            }
+            
+            const block = document.querySelector(`[data-block-id="${id}"]`);
+            if (block) {
+                block.remove();
+                updateRemoveButtons();
+            }
+        }
+
+        function updateRemoveButtons() {
+            const blocks = document.querySelectorAll('.content-block');
+            blocks.forEach(block => {
+                const removeBtn = block.querySelector('.remove-btn');
+                if (removeBtn) {
+                    removeBtn.style.display = blocks.length > 1 ? 'inline-block' : 'none';
+                }
+            });
+        }
+
+        function getBlocks() {
+            const blocks = [];
+            document.querySelectorAll('.content-block').forEach(block => {
+                const textarea = block.querySelector('textarea');
+                const videoDropdown = block.querySelector('.video-dropdown');
+                const voiceDropdown = block.querySelector('.voice-dropdown');
+                const speedDropdown = block.querySelector('.speed-dropdown');
+                
+                const text = textarea.value.trim();
+                if (text) {
+                    blocks.push({
+                        text: text,
+                        background_video: videoDropdown.value,
+                        voice_model: voiceDropdown.value,
+                        speech_speed: speedDropdown.value
+                    });
+                }
+            });
+            return blocks;
+        }
+
+        function setProcessing(isProcessing) {
+            const blocks = document.querySelectorAll('.content-block');
+            blocks.forEach(block => {
+                if (isProcessing) {
+                    block.classList.add('processing');
+                } else {
+                    block.classList.remove('processing');
+                }
+            });
+            
+            document.getElementById('ai-enhance-btn').disabled = isProcessing;
+            document.getElementById('process-btn').disabled = isProcessing;
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    status.className = 'status';
+                }, 5000);
+            }
+        }
+
+        function aiEnhance() {
+            const blocks = getBlocks();
+            
+            if (blocks.length === 0) {
+                showStatus('No content to enhance', 'error');
+                return;
+            }
+            
+            if (!confirm(`AI will enhance all ${blocks.length} block(s). Continue?`)) {
+                return;
+            }
+            
+            showStatus('✨ AI is enhancing your content...', 'info');
+            setProcessing(true);
+            
+            fetch('/ai-enhance', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({blocks: blocks})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    loadEnhancedBlocks(data.enhanced_blocks);
+                    showStatus(`✨ Enhanced ${data.enhanced_blocks.length} blocks!`, 'success');
+                } else {
+                    showStatus(data.message, 'error');
+                }
+                setProcessing(false);
+            })
+            .catch(error => {
+                showStatus('Error enhancing content', 'error');
+                setProcessing(false);
+            });
+        }
+
+        function loadEnhancedBlocks(enhanced) {
+            const container = document.getElementById('blocks-container');
+            container.innerHTML = '';
+            blockCounter = 0;
+            
+            enhanced.forEach((block, index) => {
+                blockCounter++;
+                const blockDiv = document.createElement('div');
+                blockDiv.className = 'content-block';
+                blockDiv.setAttribute('data-block-id', blockCounter);
+                
+                const bgOptions = backgrounds.map(bg => 
+                    `<option value="${bg}" ${bg === block.background_video ? 'selected' : ''}>🎬 ${bg}</option>`
+                ).join('');
+                
+                const voiceOptions = voices.map(voice => 
+                    `<option value="${voice.filename}" ${voice.filename === (block.voice_model || defaultVoice) ? 'selected' : ''}>🎤 ${voice.display_name}</option>`
+                ).join('');
+                
+                const speedOptions = ['0.8', '0.9', '1.0', '1.1', '1.2'].map(speed =>
+                    `<option value="${speed}" ${speed === block.speech_speed ? 'selected' : ''}>${speed}x</option>`
+                ).join('');
+                
+                blockDiv.innerHTML = `
+                    <div class="block-header">
+                        <span class="block-id">Block ${blockCounter}</span>
+                        <div class="block-controls">
+                            <select class="video-dropdown">${bgOptions}</select>
+                            <select class="voice-dropdown">${voiceOptions}</select>
+                            <select class="speed-dropdown">${speedOptions}</select>
+                            <button class="remove-btn" onclick="removeBlock(${blockCounter})">🗑️</button>
+                        </div>
+                    </div>
+                    <textarea>${block.text}</textarea>
+                `;
+                
+                container.appendChild(blockDiv);
+            });
+            
+            updateRemoveButtons();
+        }
+
+        function processContent() {
+            const blocks = getBlocks();
+            
+            if (blocks.length === 0) {
+                showStatus('No content to process', 'error');
+                return;
+            }
+            
+            if (!confirm(`Process ${blocks.length} block(s) and create videos?`)) {
+                return;
+            }
+            
+            showStatus('🎬 Processing your content...', 'info');
+            setProcessing(true);
+            
+            fetch('/process', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({blocks: blocks})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showStatus('✅ Videos created successfully!', 'success');
+                } else {
+                    showStatus(data.message, 'error');
+                }
+                setProcessing(false);
+            })
+            .catch(error => {
+                showStatus('Error processing content', 'error');
+                setProcessing(false);
+            });
+        }
+    </script>
+</body>
+</html>

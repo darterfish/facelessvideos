@@ -1,0 +1,145 @@
+Many reps find prospecting hard. 
+
+There are many facets to prospecting that can’t be controlled, however, the reason why sales development reps (SDR) find prospecting hard is that they are not prepared to be challenged. They aren’t prepared for the first, second, and possibly the third wave of objections. 
+
+It is super easy to teach someone to pick up the phone and engage a prospect. 
+
+I’ve written a couple of articles on that topic.
+
+You've missed the point of a cold call
+Who answers a cold call
+Win your conversations
+What Bill Clinton taught me about cold calling
+Once you broke the ice, made your introduction, dropped some credibility bombs, and tossed in the first probing question engaging the prospect, you are now in a full on conversation. 
+
+In a great conversation, you will be hit with an objection….and that’s GREAT because the sale process doesn’t even START until you get to the first objection.
+
+However, for the uninitiated, objections can rip the wheels off your sales bus.
+
+If you make prospecting calls and can handle every objection like a swami handles cobra, then this article isn’t worth your time. 
+
+However, if a prospect's objection knocks you down, even every once in a while, then this article will definitely be worth your while.
+
+There are only three real objections
+Over the last year, I pulled the data from my team with the goal of making the definitive list of objections so I could train the next crew of SDRs.
+
+Sure, I saw the HubSpot answers to 40 common objections (awesome article btw!)
+
+However, I thought I could do better, maybe find a couple common ones and pull them together so it would be easier to train. 
+
+Pouring over the data I slowly began to see a pattern emerge. Soon it became clear that while it looked like a random pattern, it was actually a fractal, a repeatable pattern that both grew and shrank with scale.
+
+Then my SDR extraordinaire, Nate, looked at me, my database, and told me my exercise was dumb….he knew from his experience, sitting next to me and the other SDRs, there were only three real objections we encountered. 
+
+Let that sink in; there are only three real objections.
+
+“I’m all set”
+“I’m a special unicorn”
+“Send me some stuff”
+That’s it. 
+
+I then took some time, worked down my database and every objection fit into one of those categories;
+
+“We have an RFP process, please fill this out” = Send me some stuff
+“I use {competitor}” = I’m all set
+“Can I {something esoteric} with your platform?” = I’m a special unicorn
+“This is how we do it around here” = I’m all set
+“Do you have a case study?” = Send me some stuff
+“Do you connect with {technology}” = I’m a special unicorn
+“We are a custom dev shop” = I’m a special unicorn
+...and on and on and on.
+
+I went back to my notes from previous jobs where I had my objection FAQs and sure enough, every single objection could be reduced to one of three objections. For the past two months, we've not found a single objection from prospecting calls that doesn't fit in one of these three categories.
+
+Sure there are other “objections” like, 
+
+“I don’t have the budget”,
+ “I don’t have time”, 
+“There’s too much going on right now”, 
+“Do you have an API?”
+...but those are not real objections, they are deflectors, words tossed up to throw you off the straight line sale. Maybe I’ll handle handling those another time.
+
+Don’t believe me?
+
+I encourage you to try the exercise on your own. I dare you to find a hard objection that doesn’t fall into one of those categories.
+
+How our objection game changed
+The key to handling any objections is knowing the source of the objection. In the past, I made pages of FAQs that reps would drill through when they encountered an objection. We called this “objection chess” where a prospect would fire off an objection, the rep would look through the codebook, find the objection and reposition. 
+
+While effective, it was painful and the learning curve was steep. Once reps nailed it, great, but until then, ramping SDRs was slow.
+
+Having only three objections dramatically changed the game and reduced ramp time.
+
+Now we play “objection rock-paper-scissors” (or in our parlance, "objection set-stuff-unicorn") and they always present first.
+
+Now every time a prospect objected we worked on figuring out which object it really was then we could answer easily and succinctly. 
+
+
+“I’m all set”
+The typical first objection a prospect comes out of the gates with is, “I’m all set".
+
+Yeah sure they are, they likely barely paid attention, they don’t know what I have to offer, so how can they be all set? They just want me off the phone.
+
+Yeah, they could have heard my company name and dropped they are using something from one of my competitors. 
+
+I would say 20% of the time this is a dead end and they are indeed “all set”.
+
+However 80% of the time, they really aren’t.
+
+The key to handling this objection is knowing your key differentiators in the market and matching that up with the key pains this particular prospect should be feeling. When a prospect hits you with “I’m all set”, you need to counter pleasantly, yet firmly with, “great how do you deal {major pain their profile likely has}?”
+
+Even if they hit you with a named competitor, you can counter them in the same way, “great how do you do {major pain}”, where that major pain would be something you know your product does better than everyone else.
+
+From there you should be able to jump into a conversation and figure out why they are not “all set”.
+
+Once you start digging eventually you will invariably get hit with the second objection or third objection...
+
+
+“I’m a special unicorn”
+While a prospect never comes right out and says they are a special unicorn, they say something such as;
+
+“my system does {something unicornish in their mind}”,
+“We are very {something that sounds unique} so we need to do it own way”, or
+“My business is unique”
+The prospect tells the rep that their situation is unique and nobody can solve it. Regardless of how they say it, this objection always makes me smile. 
+
+The reason? It is a “gotcha” statement.
+
+But they don't got me, I got them :)
+
+For this reason, the “I’m a special unicorn” objection is the one objection that opens the door for the SDR to prove themselves a credible source of valuable information. 
+
+Why? 
+
+Provided the SDR has done their research and due diligence on the prospect, and the prospect fits the profile*, the SDR should be able to talk around their special case and provide insights into how they can help.
+
+If you aren’t careful answering the “I’m a special unicorn” question, you can trigger the third and final objection.
+
+
+“Send me some stuff”
+This is by far the most common deflection and objection. This is the kindest and nicest way for someone to get you off the phone feeling good about yourself. However, they now know which number to block. 
+
+Don’t get me wrong, “Send me some stuff”, is a crippling objection.
+
+Like “I’m all set”, a prospect can throw up “send me some stuff” right out of the gates. 
+
+You made a brilliant pitch, seems intriguing, but I’ve got 8 fires to put out, “send me some stuff”. 
+
+If they can’t give you two minutes right now while they are already distracted, do you really think they will ever find 3 minutes to read and respond to your email later?
+
+Nope.
+
+The key to handling this one is to call it for what it is, a blow off. 
+
+What we do is first agree, gather the correct information, always double check email information because ZoomInfo, DiscoverOrg, Hunter.io, Data.com or Seamless.ai are never 100% accurate all the time, then try to figure out what information they want. 
+
+If you are like every single company, you should have terabytes of collateral you can send them. So how are you supposed to know WHAT piece of information you need to send them to convert them to a discovery call? 
+
+If you hit me with “send me some stuff” I’m going tell you, "Sure I can send you some stuff, I can blow up your inbox with collateral akin to a denial of service (DoS) attack".
+
+Trust me, neither of us wants this.
+
+That exact statement usually gets me a chuckle or two, then back to a meaningful conversation about what they are really looking for, which I can usually talk around, guide them to our website and drive for my goal of a cold call next step; a real discovery call.
+
+Conclusion
+The main reason for prospecting is hard is due to the fact that many people think it can be neither scripted nor controlled. The fact is that prospecting can be both scripted and controlled. With the right SDR at the helm, with an internalized script, and know that there are only a finite number of types of questions they can get hit with, confidence skyrockets, with confidence comes success and results.

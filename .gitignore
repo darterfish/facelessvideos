@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtualenv
+.venv/
+venv/
+
+# Local outputs / temp
+output/
+data/temp/
+data/snippets_*.json
+data/_last_model_output*.txt
+
+# Large assets (store elsewhere)
+assets/backgrounds/
+assets/piper_voice/
+
+# OS
+.DS_Store

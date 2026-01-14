@@ -1,0 +1,218 @@
+LinkedIn is a powerful networking tool where professionals meet, connect, and interact. 
+
+For many, this social selling platform can be a very lucrative channel. Unfortunately, however, many folks are missing out or can’t quite get the hang of it.
+
+I’ve been on the platform for many years; I’ve cultivated my audience, curated my content, and, eventually, I found my voice. 
+
+It has been a struggle at times, but recently I’ve come to what I believe is a future-proof system of using LinkedIN that will keep your calendar booked. 
+
+While future-proof, there will invariably be nuances and technology changes (eg, polls, articles, announcing a link in the first comment, etc.), that will game the algorithm in an optimistic way.
+
+Algorithm nuances aside, here is my bare-bones version of how to build up your LinkedIn social selling platform.
+
+Here are the steps
+
+Set up your technology
+Audience finder
+Metrics
+Automation
+Define your brand archetype
+What content will you share?
+Building your network 
+Outbound
+Inbound 
+Catfishing
+
+LinkedIN is a technology, so you need technology to make the most of it. The first platform you should invest in is LinkedIN, specifically LinkedIN Sales Navigator. 
+
+Let’s face it, Microsoft bought LinkedIN for over a billion dollars; they didn’t do it out of goodwill; they did it to make money and lots of it. LinkedIN Sales Navigator (LI Sales Nav) is one way how they do it. If they haven’t recouped their costs by now, someone isn’t doing things right.
+
+LI Sales Nav is $79/user/month or just under one thousand dollars a year. Cut out a couple of Starbucks coffees, and this should affordable. 
+
+The value of LI Sales Nav is building your list of people who fit the criteria that you want to be connected to.
+
+Set your criteria, review the results, then pretty much forget it. Well, don’t forget about it, you’ve spent $79/month on it, but we will get back to this when we talk about building your network.
+
+The next technology is measuring your effectiveness.
+
+Measure your message
+Remember the age-old adage from Peter Drucker, “what is measured improves.”?
+
+Well, that is also true in LinkedIN as it is elsewhere. 
+
+LinkedIN as a platform does a terrible job of allowing users to measure the reach and effectiveness of their posts, so there are a number of third-party platforms that will enable you to do that.
+
+@Shield https://www.shieldapp.ai/ and @Inlytic https://www.inlytics.io/ are two of those platforms that I use as well as some of my LinkedIN user colleagues.
+
+You will want to measure what is working, what isn’t, and, importantly, your content’s engagement. Finding the content that resonates with your audience and your voice to propel that content takes time. Again, I will get to finding your voice a bit later.
+
+Once you’ve dialed everything in, there is only one more technology you may need.
+
+Automate you LinkedIN
+LinkedIN automation can either be advantageous or can land you in LinkedIN jail. As automation can be a double-edged sword, this is why it is the last step in implementing technology to your social selling system.
+
+You want to know the right way and velocity you can handle before you put the robots on the task. 
+
+Too much too soon, and you land in LinkedIN jail. 
+
+Not a lot, but effectively, you land in LinkedIN jail.
+
+You will want to know how your network resonates with your message and how they respond before automating. Then, go to town and let the robots have at it once you get the game plan for them figured out.
+
+Now that you’ve got your tech stack aligned, it is time to move to the qualitative phase of your LinkedIN strategy and finding your voice.
+
+What is your archetype?
+
+Your archetype is the way you convey your message to your audience. If you want your brand to stick and be consistent, identify your archetype and stick with it. 
+
+For example, I am ‘the sage,’ always presenting valuable information easy to digest. Even when I am angered by some silly sales or marketing blunder I see, I try to make it into a teachable moment and provide actionable advice.
+
+Before reading Ryan O’Hara’s thesis, I lacked a consistent archetype, and my content was hit or miss. However, once I settled into “the sage,” my audience grew steadily. In his article, he clearly defines the 12 archetypes. 
+
+https://blog.leadiq.com/articles/an-introduction-to-brand-archetyping-for-social-selling
+
+Please do yourself a favor and read it! 
+
+If reading is not your jam (so why are you here?), here’s a picture from his post.
+
+What content will you share?
+While third on the list, this is by far the most important. 
+
+Why? 
+
+Content is, has, and will always be both king and queen.
+
+If you have the same content that everyone else has, you are the same as everyone else.
+
+If you constantly are sharing or posting the same topic, your audience will disengage. 
+
+If you are not sharing valuable or actionable content, your audience will treat your posts as interruptions.
+
+If you are constantly promoting or selling your services or product, your audience will treat your posts like paid advertisements.
+
+So what do you do?
+
+Figure out what are several core topics you can create a post about. 
+
+For me, an entrepreneur who offers fractional revenue operations services, I post on a plethora of topics such as; 
+
+Quantitative Prospecting (eg, metrics & data)
+Qualitative Prospecting (eg, cold calling & social selling)
+Marketing, sales, and finance technology stack building & optimization
+As I try to stay consistent with my archetype of “the sage,” I tend not to post on topics such as;
+
+Motivation / inspirational
+Workplace behind the scenes
+Quotes or memes (unless they support one of the above, however these are the rare ones)
+Now that you have a list of topics change them up from time to time.
+
+Now there are two posting tactics you can follow.
+
+Don’t post consistently on one theme; mix it up or post on a theme and move on.
+
+Mixing it up
+
+If you have a technology to schedule posts, you can write on one theme, schedule them out, write on another theme, schedule them out, and so on. While scheduling, you can either ensure that no two themes are adjacent.
+
+My preference is, post a series of posts on a particular theme. 
+
+For example, when I blog, I blog in theme segments. I’ll write three or four blogs on a topic, then change topics. Then, when someone asks for my position on an issue, I have several articles I can send to them.
+
+I do the same with my LinkedIN posts over the course of a week or two; teach them something so that they will come back day after day to learn more. 
+
+For example, if you want to teach people about email deliverability, post once on SPF, another post on DKIM, another post on DMARC, then tie them all together with one on email warming.
+
+My two cents: Make your post about 150-300 words.
+
+Sentences spaced out nicely.
+
+Key points highlighted somehow.
+
+Recommendation: Add a picture or a video to your post every once in a while. People will always expect them if you start hard and add images or videos to all your initial posts. 
+
+Best practice tip: Use relevant hashtags but don’t overstuff, three to five, not ten to twenty. Tag some people, not all the people, and don’t always tag the same people every time. Over tagging, the same people will cause them and your audience to fatigue.
+
+Pro move: If you have your LinkedIN metrics system set up, see what resonates, write longer-form blog articles on those topics, use @SEMRush and @RankMath to optimize for keywords, then recycle those topics months later. 
+
+Okay, now it is time to build your network with all the strategies and tactics set up.
+
+Building your network
+
+My three ways three of building my network are via outbound, inbound, and catfishing.
+
+Outbound 
+
+Outbound is by far the easiest way to build your network. 
+
+You’ve built your search on LI Sales Nav, find interesting people, and connect with them. 
+
+I always personalize the invite.
+
+The first reason is that it ensures I will always know the directionality of the connection request (eg, outbound, inbound, or catfishing).
+
+Second I tag my connections with the reason for the connection request.
+
+WIth tagging out of the way, here are the three types of outbounds I develop. 
+
+The first ones you pull in from LI Sales Navigator. These are the coldest ones you can find. These are people who fit search criteria and you reach out and connect with them. You may connect with them as they just fit the criteria or they changed jobs. If they have a recent post or articles written about them, you can either implement them into an outbound strategy or try to catfish them (more on that in a bit).
+
+Regardless, I am loath to receive blank messages, so, again, I always personalize my cold outbound messages. 
+
+If you’re running out of ideas on what to say in a personal message, here’s an article on how to quickly break down a LinkedIN profile. https://www.linkedin.com/pulse/quickly-break-down-linkedin-profile-mark-shalinsky/
+
+A personalized outbound message enables me to know the directionality and the key trigger that motivated ME to action.
+
+This solves for the issue when I am contacted by someone three years after our initial connection and wondering, “why am I connected to them? Where did they come from?”.
+
+The second outbound tactic is connecting with someone who has commented on one of my posts. Again, I personalize. The personalization may be short and succinct, but it will help jog my memory my why I reached out. Something a la, “Thanks for the comment on my post on email delivery!”
+
+If they’ve asked an intriguing question, I may answer it succinctly on the post; however, I’ll dig deeper on the connection or follow-up message in an attempt to drive a more meaningful conversation.
+
+In my mind, usually, the best connections to make are with those who engage in social interaction with your post. They don’t leave a comment; they just smash that “like” button and move. When you get them into your network, you open your messages to their vast network. So again, I will personalize the statement; “thanks for the like on my post on X” to leave a trail of breadcumbs for future me.
+
+Ok, we’ve reviewed the outbound time to start picking up the inbounds.
+
+Inbound
+
+My definition of a LinkedIN inbound lead is either someone who sends a connection request, or significantly, someone who creeps on my profile. 
+
+Those that send a connection request seem like they are the easy ones. However, they may not be.
+
+If they don’t leave a message, I’ll connect with them, then message back, “What about my profile piqued your interest?”
+
+First, this helps identify the directionality of the connection request; they came to me, and I don’t know from where. Second, if the requester responds, they let you know why they sent the connection request. 
+
+If they have originated from a post, they usually come clean, communicate, and engage them in a conversation. 
+
+Catfishing
+
+Catfishing is by far the most intriguing and fun prospecting method that I deploy.
+
+I do it two ways; passive and active.
+
+Passive catfishing is when I creep on someone’s LinkedIn profile a couple of times and go away.
+
+Do they creep back on mine?
+
+If they do, then I will send a blind connection request. Notice, these are the only times I send blind connection requests, again, so I know the directionality of the connection.
+
+Now the game is on.
+
+Do they start engaging with my content or are they producing content that I can engage with? Yes, then I put them in my inbound or outbound LinkedIn engagement program. 
+
+Better yet, do they start engaging with my content?
+
+Fantastic! Now it is time to dig in and see how far down the rabbit hole we can go.
+
+Active catfishing is by far more fun.
+
+Use your LinkedIN Sales Navigator search to find people with whom you want to interact with and see what they are posting. If it is relevant to you, cyberbully that social enagement button. If it is super relevant, drop a comment.
+
+When they come back and connection request you, you’ve got ’em.
+
+Conclusion
+LinkedIN is a powerful business networking platform. While I’ve been on the platform and utilizing it for years, the pandemic has shown its versatility; many more social sellers are building their network, weaponizing their network, and creating a predictable revenue stream from this person-to-person platform.
+
+As well, as LinkedIN grows it is becoming the main port of call for folks looking to get into dark social networks on Slack, Discord, or WhatsApp. The broader you reach on LinkedIN, the more value you bring, the more opportunities it will create.
+
+Invest in LinkedIN and it will invest in you.

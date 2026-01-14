@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Review Snippets</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .video-selector {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid #2196F3;
+        }
+        .video-selector label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .video-selector select {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #2196F3;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        .video-selector button {
+            padding: 8px 16px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .video-selector button:hover {
+            background: #0b7dda;
+        }
+        .snippet {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: opacity 0.3s, background 0.3s;
+        }
+        .snippet.excluded {
+            opacity: 0.5;
+            background: #f8f8f8;
+        }
+        .snippet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        .snippet-id {
+            font-weight: bold;
+            color: #333;
+        }
+        .snippet-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .video-dropdown {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+            background: white;
+        }
+        .exclude-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #d32f2f;
+            font-size: 0.9em;
+        }
+        .exclude-checkbox input {
+            cursor: pointer;
+        }
+        .char-count {
+            color: #666;
+            font-size: 0.9em;
+        }
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        .buttons {
+            position: sticky;
+            top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .save-btn {
+            background: #4CAF50;
+            color: white;
+            flex: 1;
+        }
+        .save-btn:hover {
+            background: #45a049;
+        }
+        .continue-btn {
+            background: #2196F3;
+            color: white;
+            flex: 1;
+        }
+        .continue-btn:hover {
+            background: #0b7dda;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        .info {
+            color: #666;
+            margin: 5px 0;
+        }
+        .excluded-count {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📝 Review & Edit Snippets</h1>
+        <div class="info"><strong>Source:</strong> {{ source_file }}</div>
+        <div class="info"><strong>Snippets File:</strong> {{ snippets_file }}</div>
+        <div class="info"><strong>Total Snippets:</strong> {{ snippet_count }}</div>
+        <div class="info"><strong>Excluded:</strong> <span id="excluded-count" class="excluded-count">0</span></div>
+    </div>
+
+    <div class="video-selector">
+        <label>🎬 Background Video:</label>
+        <select id="global-video-template">
+            <option value="">-- Select for individual snippets --</option>
+            {% for bg in backgrounds %}
+            <option value="{{ bg }}">{{ bg }}</option>
+            {% endfor %}
+        </select>
+        <button onclick="applyToAll()">Apply to All</button>
+    </div>
+
+    <div class="video-selector">
+        <label>🎤 Speech Speed:</label>
+        <select id="global-speech-speed">
+            <option value="">-- Select for individual snippets --</option>
+            <option value="0.8">Slow (0.8x)</option>
+            <option value="0.9">Slightly Slow (0.9x)</option>
+            <option value="1.0">Normal (1.0x)</option>
+            <option value="1.1">Slightly Fast (1.1x)</option>
+            <option value="1.2">Fast (1.2x)</option>
+        </select>
+        <button onclick="applySpeedToAll()">Apply to All</button>
+    </div>
+
+    <div class="buttons">
+        <button class="save-btn" onclick="saveSnippets()">💾 Save Changes</button>
+        <button class="continue-btn" onclick="continueAndRun()">▶️ Save & Continue Pipeline</button>
+    </div>
+
+    <div id="status" class="status"></div>
+    
+    <div id="completion-message" style="display: none; background: white; padding: 30px; border-radius: 8px; margin-top: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+        <h2 style="color: #4CAF50; margin-bottom: 20px;">✅ Pipeline Complete!</h2>
+        <p style="margin-bottom: 20px;">Your videos have been generated successfully.</p>
+        <button onclick="processAnother()" style="background: #2196F3; color: white; padding: 15px 30px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer;">
+            🔄 Process Another Source
+        </button>
+    </div>
+
+
+    <div id="snippets-container">
+        {% for snippet in snippets %}
+        <div class="snippet" id="snippet-container-{{ loop.index0 }}">
+            <div class="snippet-header">
+                <span class="snippet-id">{{ snippet.id }}</span>
+                <div class="snippet-controls">
+                    <select class="video-dropdown" id="video-{{ loop.index0 }}">
+                        {% for bg in backgrounds %}
+                        <option value="{{ bg }}" {% if snippet.background_video == bg %}selected{% elif not snippet.background_video and bg == default_background %}selected{% endif %}>{{ bg }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select class="video-dropdown" id="speed-{{ loop.index0 }}">
+                        <option value="0.8" {% if snippet.speech_speed == "0.8" %}selected{% endif %}>🐢 0.8x</option>
+                        <option value="0.9" {% if snippet.speech_speed == "0.9" %}selected{% endif %}>🐌 0.9x</option>
+                        <option value="1.0" {% if snippet.speech_speed == "1.0" or not snippet.speech_speed %}selected{% endif %}>▶️ 1.0x</option>
+                        <option value="1.1" {% if snippet.speech_speed == "1.1" %}selected{% endif %}>⚡ 1.1x</option>
+                        <option value="1.2" {% if snippet.speech_speed == "1.2" %}selected{% endif %}>🚀 1.2x</option>
+                    </select>
+
+                    <label class="exclude-checkbox">
+                        <input 
+                            type="checkbox" 
+                            id="exclude-{{ loop.index0 }}"
+                            onchange="toggleExclude({{ loop.index0 }})"
+                        >
+                        <span>🗑️ Exclude</span>
+                    </label>
+                    <span class="char-count" id="count-{{ loop.index0 }}">{{ snippet.voice_script|length }} chars</span>
+                </div>
+            </div>
+            <textarea 
+                id="snippet-{{ loop.index0 }}" 
+                data-id="{{ snippet.id }}"
+                oninput="updateCharCount({{ loop.index0 }})"
+            >{{ snippet.voice_script }}</textarea>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function updateCharCount(index) {
+            const textarea = document.getElementById('snippet-' + index);
+            const counter = document.getElementById('count-' + index);
+            counter.textContent = textarea.value.length + ' chars';
+        }
+
+        function toggleExclude(index) {
+            const container = document.getElementById('snippet-container-' + index);
+            const checkbox = document.getElementById('exclude-' + index);
+            
+            if (checkbox.checked) {
+                container.classList.add('excluded');
+            } else {
+                container.classList.remove('excluded');
+            }
+            
+            updateExcludedCount();
+        }
+
+        function updateExcludedCount() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            let excludedCount = 0;
+            checkboxes.forEach(function(cb) {
+                if (cb.checked) excludedCount++;
+            });
+            document.getElementById('excluded-count').textContent = excludedCount;
+        }
+
+        function applyToAll() {
+            const globalTemplate = document.getElementById('global-video-template').value;
+            if (!globalTemplate) {
+                alert('Please select a video template first');
+                return;
+            }
+            
+            const videoDropdowns = document.querySelectorAll('.video-dropdown');
+            videoDropdowns.forEach(function(dropdown) {
+                dropdown.value = globalTemplate;
+            });
+            
+            showStatus('Applied "' + globalTemplate + '" to all snippets', false);
+        }
+
+        function applySpeedToAll() {
+            const globalSpeed = document.getElementById('global-speech-speed').value;
+            if (!globalSpeed) {
+                alert('Please select a speech speed first');
+                return;
+            }
+            
+            const speedDropdowns = document.querySelectorAll('[id^="speed-"]');
+            speedDropdowns.forEach(function(dropdown) {
+                dropdown.value = globalSpeed;
+            });
+            
+            showStatus('Applied speech speed ' + globalSpeed + 'x to all snippets', false);
+        }
+
+        function getSnippets() {
+            const snippets = [];
+            const textareas = document.querySelectorAll('textarea');
+            textareas.forEach(function(textarea, index) {
+                const checkbox = document.getElementById('exclude-' + index);
+                const videoDropdown = document.getElementById('video-' + index);
+                const speedDropdown = document.getElementById('speed-' + index);
+             
+                
+                if (!checkbox.checked) {
+                    snippets.push({
+                        id: textarea.dataset.id,
+                        voice_script: textarea.value,
+                        background_video: videoDropdown.value,
+                        speech_speed: speedDropdown.value
+                    });
+                }
+            });
+            return snippets;
+        }
+
+        function showStatus(message, isError) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = isError ? 'status error' : 'status success';
+            setTimeout(function() {
+                status.className = 'status';
+            }, 3000);
+        }
+
+        function saveSnippets() {
+            const snippets = getSnippets();
+            fetch('/save', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({snippets: snippets})
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                showStatus(data.message, false);
+            })
+            .catch(function(error) {
+                showStatus('Error saving snippets', true);
+            });
+        }
+
+        function continueAndRun() {
+            const snippets = getSnippets();
+            const totalSnippets = document.querySelectorAll('textarea').length;
+            const excludedCount = totalSnippets - snippets.length;
+            
+            let confirmMessage = 'Save changes and continue with the pipeline?';
+            if (excludedCount > 0) {
+                confirmMessage = 'You are excluding ' + excludedCount + ' snippet(s). Continue with ' + snippets.length + ' snippets?';
+            }
+            
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            const btn = document.querySelector('.continue-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Running pipeline...';
+
+            fetch('/continue', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({snippets: snippets})
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Pipeline failed');
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                showStatus(data.message, false);
+                btn.textContent = '✅ Complete';
+                
+                // Show completion message with "Process Another" button
+                document.getElementById('completion-message').style.display = 'block';
+                
+                // Scroll to completion message
+                document.getElementById('completion-message').scrollIntoView({ behavior: 'smooth' });
+            })
+
+            .catch(function(error) {
+                showStatus('Error running pipeline', true);
+                btn.disabled = false;
+                btn.textContent = '▶️ Save & Continue Pipeline';
+            });
+        }
+
+        // Auto-save every 30 seconds
+        setInterval(function() {
+            saveSnippets();
+        }, 30000);
+
+        function processAnother() {
+            window.location.href = '/start-new';
+        }
+    </script>
+</body>
+</html>
