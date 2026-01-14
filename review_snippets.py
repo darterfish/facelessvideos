@@ -5,6 +5,7 @@ import subprocess
 import sys
 from datetime import date
 import shutil
+import os
 
 app = Flask(__name__)
 DATA_DIR = Path("data")
@@ -283,5 +284,11 @@ def process():
             except Exception as e:
                 print(f"   Failed to delete {debug_file.name}: {e}")
                 
+# if __name__ == "__main__":
+#     app.run(debug=False, port=5001, host='127.0.0.1')
+
+
+
 if __name__ == "__main__":
-    app.run(debug=False, port=5001, host='127.0.0.1')
+    port = int(os.environ.get("PORT", "5001"))
+    app.run(debug=False, host="0.0.0.0", port=port)
