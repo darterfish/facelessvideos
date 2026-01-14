@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 5001
 
-CMD ["python", "review_snippets.py"]
+CMD ["sh", "-c", "gunicorn -b 0.0.0.0:${PORT:-5001} review_snippets:app"]
