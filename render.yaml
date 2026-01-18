@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: facelessvideos
+    env: docker
+    branch: clean-main
+    plan: free
+    envVars:
+      - key: REDIS_URL
+        fromService:
+          name: facelessvideos-redis
+          type: redis
+
+  - type: worker
+    name: facelessvideos-worker
+    env: python
+    branch: clean-main
+    startCommand: python worker.py
+    plan: free
+    envVars:
+      - key: REDIS_URL
+        fromService:
+          name: facelessvideos-redis
+          type: redis
+
+datastores:
+  - name: facelessvideos-redis
+    type: redis
+    plan: free
