@@ -1,4 +1,8 @@
 services:
+  - type: redis
+    name: facelessvideos-redis
+    plan: free
+
   - type: web
     name: facelessvideos
     env: docker
@@ -9,6 +13,7 @@ services:
         fromService:
           name: facelessvideos-redis
           type: redis
+          property: connectionString
 
   - type: worker
     name: facelessvideos-worker
@@ -21,8 +26,4 @@ services:
         fromService:
           name: facelessvideos-redis
           type: redis
-
-datastores:
-  - name: facelessvideos-redis
-    type: redis
-    plan: free
+          property: connectionString
