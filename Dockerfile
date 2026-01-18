@@ -2,7 +2,16 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y ffmpeg
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    wget \
+    tar \
+    && wget -O /tmp/piper.tar.gz https://github.com/rhasspy/piper/releases/download/v1.2.0/piper-linux-x86_64.tar.gz \
+    && tar -xzf /tmp/piper.tar.gz -C /tmp \
+    && mv /tmp/piper/piper /usr/local/bin/piper \
+    && chmod +x /usr/local/bin/piper \
+    && rm -rf /tmp/piper /tmp/piper.tar.gz
+
 
 COPY requirements.txt .
 
