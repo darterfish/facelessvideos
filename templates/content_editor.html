@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Content Editor</title>
+    <title>Review Snippets</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,100 +17,49 @@
             margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .file-upload-section {
+        .video-selector {
             background: #e3f2fd;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
             border: 2px solid #2196F3;
-            text-align: center;
         }
-        .file-upload-section input[type="file"] {
-            display: none;
-        }
-        .file-upload-btn {
-            background: #2196F3;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: inline-block;
+        .video-selector label {
             font-weight: bold;
+            margin-right: 10px;
         }
-        .file-upload-btn:hover {
-            background: #0b7dda;
-        }
-        .global-controls {
-            background: #fff3e0;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 2px solid #FF9800;
-        }
-        .global-controls h3 {
-            margin-top: 0;
-            color: #333;
-        }
-        .control-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .control-row label {
-            min-width: 140px;
-            font-weight: bold;
-        }
-        .control-row select {
-            flex: 1;
+        .video-selector select {
             padding: 8px 12px;
             border-radius: 4px;
-            border: 1px solid #ddd;
+            border: 1px solid #2196F3;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        .video-selector button {
+            padding: 8px 16px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
             font-size: 14px;
         }
-        .control-row button {
-            padding: 8px 20px;
-            background: #FF9800;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            white-space: nowrap;
+        .video-selector button:hover {
+            background: #0b7dda;
         }
-        .control-row button:hover {
-            background: #F57C00;
-        }
-        .randomize-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .randomize-btn {
-            flex: 1;
-            padding: 12px 20px;
-            background: #9C27B0;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .randomize-btn:hover {
-            background: #7B1FA2;
-        }
-        .content-block {
+        .snippet {
             background: white;
             padding: 20px;
             margin-bottom: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: opacity 0.3s, background 0.3s;
         }
-        .content-block.processing {
+        .snippet.excluded {
             opacity: 0.5;
-            pointer-events: none;
+            background: #f8f8f8;
         }
-        .block-header {
+        .snippet-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -118,38 +67,39 @@
             padding-bottom: 10px;
             border-bottom: 2px solid #eee;
         }
-        .block-id {
+        .snippet-id {
             font-weight: bold;
             color: #333;
         }
-        .block-controls {
+        .snippet-controls {
             display: flex;
             align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 15px;
         }
-        .video-dropdown, .speed-dropdown, .voice-dropdown {
+        .video-dropdown {
             padding: 6px 10px;
             border-radius: 4px;
             border: 1px solid #ddd;
-            font-size: 12px;
-            max-width: 150px;
-        }
-        .remove-btn {
-            background: #f44336;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
             font-size: 13px;
+            background: white;
         }
-        .remove-btn:hover {
-            background: #d32f2f;
+        .exclude-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #d32f2f;
+            font-size: 0.9em;
+        }
+        .exclude-checkbox input {
+            cursor: pointer;
+        }
+        .char-count {
+            color: #666;
+            font-size: 0.9em;
         }
         textarea {
             width: 100%;
-            min-height: 150px;
+            min-height: 120px;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -157,24 +107,11 @@
             font-size: 14px;
             resize: vertical;
         }
-        .add-block-btn {
-            background: #4CAF50;
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 24px;
-            display: block;
-            margin: 20px auto;
-            width: 60px;
-            height: 60px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
         }
-        .add-block-btn:hover {
-            background: #45a049;
-        }
-        .action-buttons {
+        .buttons {
             position: sticky;
             top: 20px;
             background: white;
@@ -184,43 +121,36 @@
             display: flex;
             gap: 10px;
             z-index: 100;
-            margin-bottom: 20px;
         }
-        .action-buttons button {
+        button {
             padding: 12px 24px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
+            transition: background 0.3s;
+        }
+        .save-btn {
+            background: #4CAF50;
+            color: white;
             flex: 1;
         }
-        .ai-enhance-btn {
-            background: #9C27B0;
+        .save-btn:hover {
+            background: #45a049;
+        }
+        .continue-btn {
+            background: #2196F3;
             color: white;
+            flex: 1;
         }
-        .ai-enhance-btn:hover {
-            background: #7B1FA2;
-        }
-        .ai-enhance-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        .process-btn {
-            background: #FF9800;
-            color: white;
-        }
-        .process-btn:hover {
-            background: #F57C00;
-        }
-        .process-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
+        .continue-btn:hover {
+            background: #0b7dda;
         }
         .status {
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 6px;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
             display: none;
         }
         .status.success {
@@ -233,164 +163,320 @@
             color: #721c24;
             display: block;
         }
-        .status.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            display: block;
-        }
-        .loading {
-            text-align: center;
-            padding: 20px;
-            font-size: 18px;
+        .info {
             color: #666;
+            margin: 5px 0;
+        }
+        .excluded-count {
+            color: #d32f2f;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>📝 Content Editor</h1>
-        <p>Load a text file or enter content manually, then enhance with AI or process directly.</p>
+        <h1>📝 Review & Edit Snippets</h1>
+        <div class="info"><strong>Source:</strong> {{ source_file }}</div>
+        <div class="info"><strong>Snippets File:</strong> {{ snippets_file }}</div>
+        <div class="info"><strong>Total Snippets:</strong> {{ snippet_count }}</div>
+        <div class="info"><strong>Excluded:</strong> <span id="excluded-count" class="excluded-count">0</span></div>
     </div>
 
-    <div class="file-upload-section">
-        <label for="file-input" class="file-upload-btn">
-            📁 Select Text File (.txt)
-        </label>
-        <input type="file" id="file-input" accept=".txt" onchange="handleFileUpload()">
-        <div id="file-name" style="margin-top: 10px; color: #666;"></div>
+    <div class="upload-section" style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h2 style="margin-top: 0; color: #333;">📤 Upload Assets</h2>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+            <!-- Upload Text File -->
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 6px;">
+                <h3 style="margin-top: 0; font-size: 16px;">📄 Upload Text File</h3>
+                <input type="file" id="text-upload" accept=".txt" style="display: none;">
+                <button onclick="document.getElementById('text-upload').click()" style="background: #FF9800; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%;">
+                    Choose Text File
+                </button>
+                <div id="text-upload-status" style="margin-top: 10px; font-size: 13px; color: #666;"></div>
+            </div>
+
+            <!-- Upload Background Videos -->
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 6px;">
+                <h3 style="margin-top: 0; font-size: 16px;">🎬 Upload Background Videos</h3>
+                <input type="file" id="video-upload" accept=".mp4,.mov,.avi,.webm" multiple style="display: none;">
+                <button onclick="document.getElementById('video-upload').click()" style="background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%;">
+                    Choose Video Files
+                </button>
+                <div id="video-upload-status" style="margin-top: 10px; font-size: 13px; color: #666;"></div>
+            </div>
+
+            <!-- Upload Voice Models -->
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 6px;">
+                <h3 style="margin-top: 0; font-size: 16px;">🎤 Upload Voice Models</h3>
+                <input type="file" id="voice-upload" accept=".onnx,.json" multiple style="display: none;">
+                <button onclick="document.getElementById('voice-upload').click()" style="background: #2196F3; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%;">
+                    Choose Voice Files (.onnx + .json)
+                </button>
+                <div id="voice-upload-status" style="margin-top: 10px; font-size: 13px; color: #666;"></div>
+            </div>
+        </div>
     </div>
 
-    <div class="global-controls">
-        <h3>🎛️ Global Controls</h3>
-        
-        <div class="control-row">
-            <label>🎬 Background for All:</label>
-            <select id="global-background">
-                {% for bg in backgrounds %}
-                <option value="{{ bg }}">{{ bg }}</option>
-                {% endfor %}
-            </select>
-            <button onclick="applyBackgroundToAll()">Apply to All</button>
+
+    <div class="video-selector" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: center;">
+        <!-- Background Video -->
+        <div>
+            <label style="display: block; margin-bottom: 5px;">🎬 Background Video:</label>
+            <div style="display: flex; gap: 10px;">
+                <select id="global-video-template" style="flex: 1;">
+                    <option value="">-- Select for individual snippets --</option>
+                    {% for bg in backgrounds %}
+                    <option value="{{ bg }}">{{ bg }}</option>
+                    {% endfor %}
+                </select>
+                <button onclick="applyToAll()" style="white-space: nowrap;">Apply to All</button>
+            </div>
         </div>
         
-        <div class="control-row">
-            <label>🎤 Voice for All:</label>
-            <select id="global-voice">
-                {% for voice in voices %}
-                <option value="{{ voice.filename }}">{{ voice.display_name }}</option>
-                {% endfor %}
-            </select>
-            <button onclick="applyVoiceToAll()">Apply to All</button>
+        <!-- Voice Model -->
+        <div>
+            <label style="display: block; margin-bottom: 5px;">🎤 Voice Model:</label>
+            <div style="display: flex; gap: 10px;">
+                <select id="global-voice-model" style="flex: 1;">
+                    <option value="">-- Select for individual snippets --</option>
+                    {% for voice in voices %}
+                    <option value="{{ voice.filename }}">{{ voice.display_name }}</option>
+                    {% endfor %}
+                </select>
+                <button onclick="applyVoiceToAll()" style="white-space: nowrap;">Apply to All</button>
+            </div>
         </div>
         
-        <div class="randomize-buttons">
-            <button class="randomize-btn" onclick="randomizeVideos()">🎲 Randomize Videos</button>
-            <button class="randomize-btn" onclick="randomizeVoices()">🎲 Randomize Voices</button>
+        <!-- Speech Speed -->
+        <div>
+            <label style="display: block; margin-bottom: 5px;">🎤 Speech Speed:</label>
+            <div style="display: flex; gap: 10px;">
+                <select id="global-speech-speed" style="flex: 1;">
+                    <option value="">-- Select for individual snippets --</option>
+                    <option value="0.8">Slow (0.8x)</option>
+                    <option value="0.9">Slightly Slow (0.9x)</option>
+                    <option value="1.0">Normal (1.0x)</option>
+                    <option value="1.1">Slightly Fast (1.1x)</option>
+                    <option value="1.2">Fast (1.2x)</option>
+                </select>
+                <button onclick="applySpeedToAll()" style="white-space: nowrap;">Apply to All</button>
+            </div>
         </div>
     </div>
 
-    <div class="action-buttons">
-        <button class="ai-enhance-btn" id="ai-enhance-btn" onclick="aiEnhance()">
-            ✨ AI Enhance
+    <div style="text-align: center; margin: 20px 0;">
+        <button onclick="addNewSnippet()" style="background: #4CAF50; color: white; padding: 15px 30px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer;">
+            ➕ Add New Snippet
         </button>
-        <button class="process-btn" id="process-btn" onclick="processContent()">
-            ▶️ Process
-        </button>
     </div>
 
+    <div class="video-selector" style="background: #f3e5f5; border: 2px solid #9C27B0;">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="flex: 1;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">✨ AI Enhancement Mode:</label>
+                <select id="ai-mode" onchange="toggleAICredentials()" style="padding: 8px; border-radius: 4px; border: 1px solid #9C27B0; width: 100%;">
+                    <option value="local">Using Locally (Ollama)</option>
+                    <option value="openai">OpenAI (ChatGPT)</option>
+                    <option value="claude">Anthropic Claude</option>
+                    <option value="perplexity">Perplexity</option>
+                    <option value="grok">Grok (xAI)</option>
+                </select>
+                            </div>
+            <div id="api-credentials" style="flex: 2; display: none;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;" id="api-key-label">🔑 API Key:</label>
+                <input type="password" id="api-key" placeholder="Enter your API key..." style="padding: 8px; border-radius: 4px; border: 1px solid #9C27B0; width: 100%;">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="buttons">
+        <button style="background: #9C27B0; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; flex: 1;" onclick="aiEnhance()">✨ AI Enhance</button>
+        <button class="continue-btn" onclick="continueAndRun()">▶️ Make Videos</button>
+    </div>
     <div id="status" class="status"></div>
+    
+    <div id="completion-message" style="display: none; background: white; padding: 30px; border-radius: 8px; margin-top: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+        <h2 style="color: #4CAF50; margin-bottom: 20px;">✅ Pipeline Complete!</h2>
+        <p style="margin-bottom: 20px;">Your videos have been generated successfully.</p>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <button onclick="downloadVideos()" style="background: #4CAF50; color: white; padding: 15px 30px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer;">
+                📥 Download All Videos (ZIP)
+            </button>
+            <button onclick="processAnother()" style="background: #2196F3; color: white; padding: 15px 30px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer;">
+                📄 Process Another Source
+            </button>
+        </div>
+    </div>
 
-    <div id="blocks-container">
-        <!-- Initial empty block -->
-        <div class="content-block" data-block-id="1">
-            <div class="block-header">
-                <span class="block-id">Block 1</span>
-                <div class="block-controls">
-                    <select class="video-dropdown">
+    <div id="snippets-container">
+        {% for snippet in snippets %}
+        <div class="snippet" id="snippet-container-{{ loop.index0 }}">
+            <div class="snippet-header">
+                <span class="snippet-id">{{ snippet.id }}</span>
+                <div class="snippet-controls">
+                    <select class="video-dropdown" id="video-{{ loop.index0 }}">
                         {% for bg in backgrounds %}
-                        <option value="{{ bg }}" {% if bg == default_background %}selected{% endif %}>🎬 {{ bg }}</option>
+                        <option value="{{ bg }}" {% if snippet.background_video == bg %}selected{% elif not snippet.background_video and bg == default_background %}selected{% endif %}>{{ bg }}</option>
                         {% endfor %}
                     </select>
-                    <select class="voice-dropdown">
+
+                    <select class="video-dropdown" id="speed-{{ loop.index0 }}">
+                        <option value="0.8" {% if snippet.speech_speed == "0.8" %}selected{% endif %}>🐢 0.8x</option>
+                        <option value="0.9" {% if snippet.speech_speed == "0.9" %}selected{% endif %}>🐌 0.9x</option>
+                        <option value="1.0" {% if snippet.speech_speed == "1.0" or not snippet.speech_speed %}selected{% endif %}>▶️ 1.0x</option>
+                        <option value="1.1" {% if snippet.speech_speed == "1.1" %}selected{% endif %}>⚡ 1.1x</option>
+                        <option value="1.2" {% if snippet.speech_speed == "1.2" %}selected{% endif %}>🚀 1.2x</option>
+                    </select>
+
+                    <select class="video-dropdown" id="voice-{{ loop.index0 }}">
                         {% for voice in voices %}
-                        <option value="{{ voice.filename }}" {% if voice.filename == default_voice %}selected{% endif %}>🎤 {{ voice.display_name }}</option>
+                        <option value="{{ voice.filename }}" {% if snippet.voice_model == voice.filename %}selected{% elif not snippet.voice_model and voice.filename == default_voice %}selected{% endif %}>{{ voice.display_name }}</option>
                         {% endfor %}
                     </select>
-                    <select class="speed-dropdown">
-                        <option value="0.8">🐢 0.8x</option>
-                        <option value="0.9">🐌 0.9x</option>
-                        <option value="1.0" selected>▶️ 1.0x</option>
-                        <option value="1.1">⚡ 1.1x</option>
-                        <option value="1.2">🚀 1.2x</option>
-                    </select>
-                    <button class="remove-btn" onclick="removeBlock(1)" style="display: none;">🗑️</button>
+
+                    <label class="exclude-checkbox">
+                        <input 
+                            type="checkbox" 
+                            id="exclude-{{ loop.index0 }}"
+                            onchange="toggleExclude({{ loop.index0 }})"
+                        >
+                        <span>🗑️ Exclude</span>
+                    </label>
+                    <span class="char-count" id="count-{{ loop.index0 }}">{{ snippet.voice_script|length }} chars</span>
                 </div>
             </div>
-            <textarea placeholder="Enter your content here... Each line will be a separate caption."></textarea>
+            <textarea 
+                id="snippet-{{ loop.index0 }}" 
+                data-id="{{ snippet.id }}"
+                oninput="updateCharCount({{ loop.index0 }})"
+            >{{ snippet.voice_script }}</textarea>
         </div>
+        {% endfor %}
     </div>
 
-    <button class="add-block-btn" onclick="addBlock()">➕</button>
-
     <script>
-        let blockCounter = 1;
-        let backgrounds = {{ backgrounds|tojson }};
-        let voices = {{ voices|tojson }};
-        let defaultBackground = "{{ default_background }}";
-        let defaultVoice = "{{ default_voice }}";
-
-        function applyBackgroundToAll() {
-            const selectedBg = document.getElementById('global-background').value;
-            document.querySelectorAll('.video-dropdown').forEach(dropdown => {
-                dropdown.value = selectedBg;
-            });
-            showStatus(`Applied "${selectedBg}" to all blocks`, 'success');
+        function updateCharCount(index) {
+            const textarea = document.getElementById('snippet-' + index);
+            const counter = document.getElementById('count-' + index);
+            counter.textContent = textarea.value.length + ' chars';
         }
 
-        function applyVoiceToAll() {
-            const selectedVoice = document.getElementById('global-voice').value;
-            const voiceName = voices.find(v => v.filename === selectedVoice)?.display_name || selectedVoice;
-            document.querySelectorAll('.voice-dropdown').forEach(dropdown => {
-                dropdown.value = selectedVoice;
-            });
-            showStatus(`Applied "${voiceName}" to all blocks`, 'success');
-        }
-
-        function randomizeVideos() {
-            if (backgrounds.length === 0) {
-                showStatus('No backgrounds available', 'error');
-                return;
+        function toggleExclude(index) {
+            const container = document.getElementById('snippet-container-' + index);
+            const checkbox = document.getElementById('exclude-' + index);
+            
+            if (checkbox.checked) {
+                container.classList.add('excluded');
+            } else {
+                container.classList.remove('excluded');
             }
             
-            document.querySelectorAll('.video-dropdown').forEach(dropdown => {
-                const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-                dropdown.value = randomBg;
-            });
-            showStatus('Randomized all background videos', 'success');
+            updateExcludedCount();
         }
 
-        function randomizeVoices() {
-            if (voices.length === 0) {
-                showStatus('No voices available', 'error');
-                return;
+        function updateExcludedCount() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            let excludedCount = 0;
+            checkboxes.forEach(function(cb) {
+                if (cb.checked) excludedCount++;
+            });
+            document.getElementById('excluded-count').textContent = excludedCount;
+        }
+        
+        // Handle video file uploads
+        document.getElementById('video-upload').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files.length === 0) return;
+            
+            const formData = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                formData.append('videos', files[i]);
             }
             
-            document.querySelectorAll('.voice-dropdown').forEach(dropdown => {
-                const randomVoice = voices[Math.floor(Math.random() * voices.length)];
-                dropdown.value = randomVoice.filename;
-            });
-            showStatus('Randomized all voices', 'success');
-        }
-
-        function handleFileUpload() {
-            const fileInput = document.getElementById('file-input');
-            const file = fileInput.files[0];
+            const statusDiv = document.getElementById('video-upload-status');
+            statusDiv.textContent = '⏳ Uploading ' + files.length + ' video(s)...';
+            statusDiv.style.color = '#666';
             
+            fetch('/upload-videos', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.status === 'success') {
+                    statusDiv.textContent = '✅ Uploaded: ' + data.uploaded.join(', ');
+                    statusDiv.style.color = '#4CAF50';
+                    
+                    // Refresh page to update video dropdowns
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    statusDiv.textContent = '❌ Error: ' + data.message;
+                    statusDiv.style.color = '#d32f2f';
+                }
+            })
+            .catch(function(error) {
+                statusDiv.textContent = '❌ Upload failed';
+                statusDiv.style.color = '#d32f2f';
+            });
+            
+            // Reset file input
+            e.target.value = '';
+        });
+
+        // Handle voice model file uploads
+        document.getElementById('voice-upload').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files.length === 0) return;
+            
+            const formData = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                formData.append('voices', files[i]);
+            }
+            
+            const statusDiv = document.getElementById('voice-upload-status');
+            statusDiv.textContent = '⏳ Uploading ' + files.length + ' voice file(s)...';
+            statusDiv.style.color = '#666';
+            
+            fetch('/upload-voices', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.status === 'success') {
+                    statusDiv.textContent = '✅ Uploaded: ' + data.uploaded.join(', ');
+                    statusDiv.style.color = '#4CAF50';
+                    
+                    // Refresh page to update voice dropdowns
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    statusDiv.textContent = '❌ Error: ' + data.message;
+                    statusDiv.style.color = '#d32f2f';
+                }
+            })
+            .catch(function(error) {
+                statusDiv.textContent = '❌ Upload failed';
+                statusDiv.style.color = '#d32f2f';
+            });
+            
+            // Reset file input
+            e.target.value = '';
+        });
+
+        // Handle text file uploads
+        document.getElementById('text-upload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
             if (!file) return;
-            
-            document.getElementById('file-name').textContent = `Loading: ${file.name}...`;
-            showStatus('Processing file...', 'info');
-            setProcessing(true);
+        
+            const statusDiv = document.getElementById('text-upload-status');
+            statusDiv.textContent = '⏳ Processing ' + file.name + '...';
+            statusDiv.style.color = '#666';
             
             const formData = new FormData();
             formData.append('file', file);
@@ -399,257 +485,391 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
                 if (data.status === 'success') {
-                    document.getElementById('file-name').textContent = `Loaded: ${file.name}`;
-                    loadSnippets(data.snippets);
-                    showStatus(`Loaded ${data.snippets.length} blocks from file`, 'success');
+                    statusDiv.textContent = '✅ Loaded: ' + file.name;
+                    statusDiv.style.color = '#4CAF50';
+                    
+                    // Refresh page to show snippets
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
                 } else {
-                    showStatus(data.message, 'error');
+                    statusDiv.textContent = '❌ Error: ' + data.message;
+                    statusDiv.style.color = '#d32f2f';
                 }
-                setProcessing(false);
             })
-            .catch(error => {
-                showStatus('Error uploading file', 'error');
-                setProcessing(false);
+            .catch(function(error) {
+                statusDiv.textContent = '❌ Upload failed';
+                statusDiv.style.color = '#d32f2f';
             });
-        }
+        
+            // Reset file input
+            e.target.value = '';
+        });
 
-        function loadSnippets(snippets) {
-            const container = document.getElementById('blocks-container');
-            container.innerHTML = '';
-            blockCounter = 0;
-            
-            snippets.forEach(snippet => {
-                blockCounter++;
-                const blockHtml = createBlockHtml(blockCounter, snippet.text);
-                container.insertAdjacentHTML('beforeend', blockHtml);
-            });
-        }
-
-        function createBlockHtml(id, text = '') {
-            const bgOptions = backgrounds.map(bg => 
-                `<option value="${bg}" ${bg === defaultBackground ? 'selected' : ''}>🎬 ${bg}</option>`
-            ).join('');
-            
-            const voiceOptions = voices.map(voice => 
-                `<option value="${voice.filename}" ${voice.filename === defaultVoice ? 'selected' : ''}>🎤 ${voice.display_name}</option>`
-            ).join('');
-            
-            return `
-                <div class="content-block" data-block-id="${id}">
-                    <div class="block-header">
-                        <span class="block-id">Block ${id}</span>
-                        <div class="block-controls">
-                            <select class="video-dropdown">${bgOptions}</select>
-                            <select class="voice-dropdown">${voiceOptions}</select>
-                            <select class="speed-dropdown">
-                                <option value="0.8">🐢 0.8x</option>
-                                <option value="0.9">🐌 0.9x</option>
-                                <option value="1.0" selected>▶️ 1.0x</option>
-                                <option value="1.1">⚡ 1.1x</option>
-                                <option value="1.2">🚀 1.2x</option>
-                            </select>
-                            <button class="remove-btn" onclick="removeBlock(${id})">🗑️</button>
-                        </div>
-                    </div>
-                    <textarea placeholder="Enter your content here... Each line will be a separate caption.">${text}</textarea>
-                </div>
-            `;
-        }
-
-        function addBlock() {
-            blockCounter++;
-            const container = document.getElementById('blocks-container');
-            const blockHtml = createBlockHtml(blockCounter);
-            container.insertAdjacentHTML('beforeend', blockHtml);
-            
-            updateRemoveButtons();
-        }
-
-        function removeBlock(id) {
-            const blocks = document.querySelectorAll('.content-block');
-            if (blocks.length <= 1) {
-                showStatus('Cannot remove the last block', 'error');
+        function applyToAll() {
+            const globalTemplate = document.getElementById('global-video-template').value;
+            if (!globalTemplate) {
+                alert('Please select a video template first');
                 return;
             }
             
-            const block = document.querySelector(`[data-block-id="${id}"]`);
-            if (block) {
-                block.remove();
-                updateRemoveButtons();
+            const videoDropdowns = document.querySelectorAll('.video-dropdown');
+            videoDropdowns.forEach(function(dropdown) {
+                dropdown.value = globalTemplate;
+            });
+            
+            showStatus('Applied "' + globalTemplate + '" to all snippets', false);
+        }
+
+        function applySpeedToAll() {
+            const globalSpeed = document.getElementById('global-speech-speed').value;
+            if (!globalSpeed) {
+                alert('Please select a speech speed first');
+                return;
+            }
+            
+            const speedDropdowns = document.querySelectorAll('[id^="speed-"]');
+            speedDropdowns.forEach(function(dropdown) {
+                dropdown.value = globalSpeed;
+            });
+            
+            showStatus('Applied speech speed ' + globalSpeed + 'x to all snippets', false);
+        }
+
+        function applyVoiceToAll() {
+            const globalVoice = document.getElementById('global-voice-model').value;
+            if (!globalVoice) {
+                alert('Please select a voice model first');
+                return;
+            }
+            
+            const voiceDropdowns = document.querySelectorAll('[id^="voice-"]');
+            voiceDropdowns.forEach(function(dropdown) {
+                dropdown.value = globalVoice;
+            });
+            
+            showStatus('Applied voice model to all snippets', false);
+        }
+
+        function toggleAICredentials() {
+            const mode = document.getElementById('ai-mode').value;
+            const credentialsDiv = document.getElementById('api-credentials');
+            const label = document.getElementById('api-key-label');
+            const input = document.getElementById('api-key');
+            
+            if (mode === 'local') {
+                credentialsDiv.style.display = 'none';
+            } else {
+                credentialsDiv.style.display = 'block';
+                
+                // Update label and placeholder based on provider
+                switch(mode) {
+                    case 'openai':
+                        label.textContent = '🔑 OpenAI API Key:';
+                        input.placeholder = 'sk-...';
+                        break;
+                    case 'claude':
+                        label.textContent = '🔑 Anthropic API Key:';
+                        input.placeholder = 'sk-ant-...';
+                        break;
+                    case 'perplexity':
+                        label.textContent = '🔑 Perplexity API Key:';
+                        input.placeholder = 'pplx-...';
+                        break;
+                    case 'grok':
+                        label.textContent = '🔑 Grok API Key:';
+                        input.placeholder = 'xai-...';
+                        break;
+                }
             }
         }
-
-        function updateRemoveButtons() {
-            const blocks = document.querySelectorAll('.content-block');
-            blocks.forEach(block => {
-                const removeBtn = block.querySelector('.remove-btn');
-                if (removeBtn) {
-                    removeBtn.style.display = blocks.length > 1 ? 'inline-block' : 'none';
-                }
-            });
-        }
-
-        function getBlocks() {
+function aiEnhance() {
             const blocks = [];
-            document.querySelectorAll('.content-block').forEach(block => {
-                const textarea = block.querySelector('textarea');
-                const videoDropdown = block.querySelector('.video-dropdown');
-                const voiceDropdown = block.querySelector('.voice-dropdown');
-                const speedDropdown = block.querySelector('.speed-dropdown');
+            const textareas = document.querySelectorAll('textarea');
+            
+            textareas.forEach(function(textarea, index) {
+                const checkbox = document.getElementById('exclude-' + index);
+                const videoDropdown = document.getElementById('video-' + index);
+                const speedDropdown = document.getElementById('speed-' + index);
+                const voiceDropdown = document.getElementById('voice-' + index);
                 
-                const text = textarea.value.trim();
-                if (text) {
+                if (!checkbox.checked) {
                     blocks.push({
-                        text: text,
-                        background_video: videoDropdown.value,
-                        voice_model: voiceDropdown.value,
-                        speech_speed: speedDropdown.value
+                        text: textarea.value,
+                        background_video: videoDropdown ? videoDropdown.value : 'ocean.mp4',
+                        speech_speed: speedDropdown ? speedDropdown.value : '1.0',
+                        voice_model: voiceDropdown ? voiceDropdown.value : 'default.onnx'
                     });
                 }
             });
-            return blocks;
-        }
-
-        function setProcessing(isProcessing) {
-            const blocks = document.querySelectorAll('.content-block');
-            blocks.forEach(block => {
-                if (isProcessing) {
-                    block.classList.add('processing');
-                } else {
-                    block.classList.remove('processing');
-                }
-            });
-            
-            document.getElementById('ai-enhance-btn').disabled = isProcessing;
-            document.getElementById('process-btn').disabled = isProcessing;
-        }
-
-        function showStatus(message, type) {
-            const status = document.getElementById('status');
-            status.textContent = message;
-            status.className = `status ${type}`;
-            
-            if (type === 'success' || type === 'error') {
-                setTimeout(() => {
-                    status.className = 'status';
-                }, 5000);
-            }
-        }
-
-        function aiEnhance() {
-            const blocks = getBlocks();
             
             if (blocks.length === 0) {
-                showStatus('No content to enhance', 'error');
+                alert('No snippets to enhance');
                 return;
             }
             
-            if (!confirm(`AI will enhance all ${blocks.length} block(s). Continue?`)) {
+            // Grey out snippets during enhancement
+            document.querySelectorAll('.snippet').forEach(function(s) {
+                s.style.opacity = '0.5';
+            });
+            
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Enhancing...';
+            
+            const aiMode = document.getElementById('ai-mode').value;
+            const apiKey = document.getElementById('api-key').value;
+            
+            // Validate if online mode selected
+            if (aiMode !== 'local' && !apiKey) {
+                alert('Please enter your API key');
+                document.querySelectorAll('.snippet').forEach(function(s) {
+                    s.style.opacity = '1';
+                });
+                btn.disabled = false;
+                btn.textContent = '✨ AI Enhance';
                 return;
             }
-            
-            showStatus('✨ AI is enhancing your content...', 'info');
-            setProcessing(true);
             
             fetch('/ai-enhance', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({blocks: blocks})
+                body: JSON.stringify({
+                    blocks: blocks,
+                    ai_mode: aiMode,
+                    api_key: apiKey
+                })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    loadEnhancedBlocks(data.enhanced_blocks);
-                    showStatus(`✨ Enhanced ${data.enhanced_blocks.length} blocks!`, 'success');
+
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.status === 'success' && data.enhanced_blocks) {
+                    // Update each textarea with enhanced content
+                    const enhanced = data.enhanced_blocks;
+                    textareas.forEach(function(textarea, index) {
+                        if (index < enhanced.length) {
+                            textarea.value = enhanced[index].text;
+                            updateCharCount(index);
+                        }
+                    });
+                    
+                    // Restore opacity
+                    document.querySelectorAll('.snippet').forEach(function(s) {
+                        s.style.opacity = '1';
+                    });
+                    
+                    showStatus('AI enhancement complete!', false);
+                    btn.disabled = false;
+                    btn.textContent = '✨ AI Enhance';
                 } else {
-                    showStatus(data.message, 'error');
+                    alert('AI enhancement failed: ' + (data.message || 'Unknown error'));
+                    document.querySelectorAll('.snippet').forEach(function(s) {
+                        s.style.opacity = '1';
+                    });
+                    btn.disabled = false;
+                    btn.textContent = '✨ AI Enhance';
                 }
-                setProcessing(false);
             })
-            .catch(error => {
-                showStatus('Error enhancing content', 'error');
-                setProcessing(false);
+            .catch(function(error) {
+                console.error('AI enhancement error:', error);
+                alert('AI enhancement error');
+                document.querySelectorAll('.snippet').forEach(function(s) {
+                    s.style.opacity = '1';
+                });
+                btn.disabled = false;
+                btn.textContent = '✨ AI Enhance';
             });
         }
-
-        function loadEnhancedBlocks(enhanced) {
-            const container = document.getElementById('blocks-container');
-            container.innerHTML = '';
-            blockCounter = 0;
+        function addNewSnippet() {
+            const container = document.getElementById('snippets-container');
+            const snippetCount = document.querySelectorAll('.snippet').length;
+            const newIndex = snippetCount;
+            const newId = 'N' + String(newIndex + 1).padStart(3, '0');
             
-            enhanced.forEach((block, index) => {
-                blockCounter++;
-                const blockDiv = document.createElement('div');
-                blockDiv.className = 'content-block';
-                blockDiv.setAttribute('data-block-id', blockCounter);
-                
-                const bgOptions = backgrounds.map(bg => 
-                    `<option value="${bg}" ${bg === block.background_video ? 'selected' : ''}>🎬 ${bg}</option>`
-                ).join('');
-                
-                const voiceOptions = voices.map(voice => 
-                    `<option value="${voice.filename}" ${voice.filename === (block.voice_model || defaultVoice) ? 'selected' : ''}>🎤 ${voice.display_name}</option>`
-                ).join('');
-                
-                const speedOptions = ['0.8', '0.9', '1.0', '1.1', '1.2'].map(speed =>
-                    `<option value="${speed}" ${speed === block.speech_speed ? 'selected' : ''}>${speed}x</option>`
-                ).join('');
-                
-                blockDiv.innerHTML = `
-                    <div class="block-header">
-                        <span class="block-id">Block ${blockCounter}</span>
-                        <div class="block-controls">
-                            <select class="video-dropdown">${bgOptions}</select>
-                            <select class="voice-dropdown">${voiceOptions}</select>
-                            <select class="speed-dropdown">${speedOptions}</select>
-                            <button class="remove-btn" onclick="removeBlock(${blockCounter})">🗑️</button>
+            const backgrounds = {{ backgrounds|tojson }};
+            const voices = {{ voices|tojson }};
+            const defaultBg = '{{ default_background }}';
+            const defaultVoice = '{{ default_voice }}';
+            
+            const newSnippet = `
+                <div class="snippet" id="snippet-container-${newIndex}">
+                    <div class="snippet-header">
+                        <span class="snippet-id">${newId}</span>
+                        <div class="snippet-controls">
+                            <select class="video-dropdown" id="video-${newIndex}">
+                                ${backgrounds.map(bg => `<option value="${bg}" ${bg === defaultBg ? 'selected' : ''}>${bg}</option>`).join('')}
+                            </select>
+                            <select class="video-dropdown" id="speed-${newIndex}">
+                                <option value="0.8">🐢 0.8x</option>
+                                <option value="0.9">🌙 0.9x</option>
+                                <option value="1.0" selected>▶️ 1.0x</option>
+                                <option value="1.1">⚡ 1.1x</option>
+                                <option value="1.2">🚀 1.2x</option>
+                            </select>
+                            <select class="video-dropdown" id="voice-${newIndex}">
+                                ${voices.map(v => `<option value="${v.filename}" ${v.filename === defaultVoice ? 'selected' : ''}>${v.display_name}</option>`).join('')}
+                            </select>
+                            <label class="exclude-checkbox">
+                                <input type="checkbox" id="exclude-${newIndex}" onchange="toggleExclude(${newIndex})">
+                                <span>🗑️ Exclude</span>
+                            </label>
+                            <span class="char-count" id="count-${newIndex}">0 chars</span>
                         </div>
                     </div>
-                    <textarea>${block.text}</textarea>
-                `;
-                
-                container.appendChild(blockDiv);
-            });
+                    <textarea id="snippet-${newIndex}" data-id="${newId}" oninput="updateCharCount(${newIndex})" placeholder="Enter your content here..."></textarea>
+                </div>
+            `;
             
-            updateRemoveButtons();
+            container.insertAdjacentHTML('beforeend', newSnippet);
+            showStatus('Added new snippet: ' + newId, false);
         }
 
-        function processContent() {
-            const blocks = getBlocks();
-            
-            if (blocks.length === 0) {
-                showStatus('No content to process', 'error');
-                return;
-            }
-            
-            if (!confirm(`Process ${blocks.length} block(s) and create videos?`)) {
-                return;
-            }
-            
-            showStatus('🎬 Processing your content...', 'info');
-            setProcessing(true);
-            
-            fetch('/process', {
+        function getSnippets() {
+            const snippets = [];
+            const textareas = document.querySelectorAll('textarea');
+            textareas.forEach(function(textarea, index) {
+                const checkbox = document.getElementById('exclude-' + index);
+                const videoDropdown = document.getElementById('video-' + index);
+                const speedDropdown = document.getElementById('speed-' + index);
+                const voiceDropdown = document.getElementById('voice-' + index);
+             
+                
+                if (!checkbox.checked) {
+                    snippets.push({
+                        id: textarea.dataset.id,
+                        voice_script: textarea.value,
+                        background_video: videoDropdown.value,
+                        speech_speed: speedDropdown.value,
+                        voice_model: voiceDropdown.value
+                    });
+                }
+            });
+            return snippets;
+        }
+
+        function showStatus(message, isError) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = isError ? 'status error' : 'status success';
+            setTimeout(function() {
+                status.className = 'status';
+            }, 3000);
+        }
+
+        function saveSnippets() {
+            const snippets = getSnippets();
+            fetch('/save', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({blocks: blocks})
+                body: JSON.stringify({blocks: snippets})
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    showStatus('✅ Videos created successfully!', 'success');
-                } else {
-                    showStatus(data.message, 'error');
-                }
-                setProcessing(false);
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                showStatus(data.message, false);
             })
-            .catch(error => {
-                showStatus('Error processing content', 'error');
-                setProcessing(false);
+            .catch(function(error) {
+                showStatus('Error saving snippets', true);
             });
+        }
+
+        function continueAndRun() {
+            const snippets = getSnippets();
+            // ADD THIS DEBUG LINE
+            console.log('Snippets being sent:', snippets);
+            
+            const totalSnippets = document.querySelectorAll('textarea').length;
+            const excludedCount = totalSnippets - snippets.length;
+            
+            let confirmMessage = 'Save changes and continue with the pipeline?';
+            if (excludedCount > 0) {
+                confirmMessage = 'You are excluding ' + excludedCount + ' snippet(s). Continue with ' + snippets.length + ' snippets?';
+            }
+            
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            const btn = document.querySelector('.continue-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Running pipeline...';
+
+            fetch('/continue', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({blocks: snippets})
+                            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Pipeline failed');
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                showStatus(data.message, false);
+                btn.textContent = '✅ Complete';
+                
+                // Show completion message with "Process Another" button
+                document.getElementById('completion-message').style.display = 'block';
+                
+                // Scroll to completion message
+                document.getElementById('completion-message').scrollIntoView({ behavior: 'smooth' });
+            })
+
+            .catch(function(error) {
+                showStatus('Error running pipeline', true);
+                btn.disabled = false;
+                btn.textContent = '▶️ Save & Continue Pipeline';
+            });
+        }
+
+        // Auto-save every 30 seconds
+        setInterval(function() {
+            saveSnippets();
+        }, 30000);
+
+        function downloadVideos() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Creating ZIP...';
+            
+            fetch('/download-videos', {
+                method: 'GET'
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Download failed');
+                }
+                return response.blob();
+            })
+            .then(function(blob) {
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'videos_' + new Date().toISOString().split('T')[0] + '.zip';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                btn.disabled = false;
+                btn.textContent = '📥 Download All Videos (ZIP)';
+                showStatus('Videos downloaded successfully!', false);
+            })
+            .catch(function(error) {
+                console.error('Download error:', error);
+                alert('Failed to download videos');
+                btn.disabled = false;
+                btn.textContent = '📥 Download All Videos (ZIP)';
+            });
+        }
+
+
+        function processAnother() {
+            window.location.href = '/';
         }
     </script>
 </body>
