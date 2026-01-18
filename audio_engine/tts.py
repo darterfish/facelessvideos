@@ -19,16 +19,12 @@ def tts_to_wav(text: str, out_wav: Path, voice_model: str, speech_speed: float =
     """Generate TTS audio using specified voice model"""
     out_wav.parent.mkdir(parents=True, exist_ok=True)
     
-    # Check default voice folder first
+    # Build path to voice model
     model_path = Path("assets/piper_voice") / voice_model
     
-    # If not found, check user voices folder
     if not model_path.exists():
-        model_path = Path("assets/user_voices") / voice_model
-    
-    if not model_path.exists():
-        raise FileNotFoundError(f"Voice model not found: {voice_model} (checked both assets/piper_voice and assets/user_voices)")
-    
+        raise FileNotFoundError(f"Voice model not found: {model_path}")
+        
     # length_scale is inversely related to speed
     length_scale = 1.0 / speech_speed
     

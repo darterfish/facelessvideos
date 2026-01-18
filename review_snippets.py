@@ -38,27 +38,16 @@ def get_available_backgrounds():
 
 
 def get_available_voices():
-    """Scan both piper_voice and user_voices folders and return list of voice models"""
+    """Scan piper_voice folder and return list of voice models"""
     voice_files = []
     
-    # Scan default voices
-    default_voice_dir = Path("assets/piper_voice")
-    if default_voice_dir.exists():
-        for onnx_file in default_voice_dir.glob("*.onnx"):
+    voice_dir = Path("assets/piper_voice")
+    if voice_dir.exists():
+        for onnx_file in voice_dir.glob("*.onnx"):
             voice_name = onnx_file.stem
             voice_files.append({
                 "filename": onnx_file.name,
                 "display_name": voice_name
-            })
-    
-    # Scan user-uploaded voices
-    user_voice_dir = Path("assets/user_voices")
-    if user_voice_dir.exists():
-        for onnx_file in user_voice_dir.glob("*.onnx"):
-            voice_name = onnx_file.stem
-            voice_files.append({
-                "filename": onnx_file.name,
-                "display_name": f"{voice_name} (custom)"
             })
     
     return sorted(voice_files, key=lambda x: x['display_name'])
@@ -525,7 +514,7 @@ def upload_voices():
         return jsonify({"status": "error", "message": "No voice files selected"}), 400
     
     uploaded = []
-    voices_dir = Path("assets/user_voices")
+    voices_dir = Path("assets/piper_voice")
     voices_dir.mkdir(parents=True, exist_ok=True)
     
     try:
