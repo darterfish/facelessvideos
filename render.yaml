@@ -2,6 +2,9 @@ services:
   - type: redis
     name: facelessvideos-redis
     plan: free
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: allow all (for internal use)
 
   - type: web
     name: facelessvideos
