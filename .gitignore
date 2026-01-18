@@ -54,3 +54,7 @@ __pycache__/
 .venv/
 assets/backgrounds/*.mp4
 assets/piper_voice/*.onnx
+
+# macOS
+.DS_Store
+assets/.DS_Store
