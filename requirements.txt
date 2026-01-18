@@ -2,6 +2,6 @@ flask
 gunicorn
 rq
 redis
-requests==2.32.3
-python-dotenv==1.0.1
+requests
 piper-tts
+python-dotenv

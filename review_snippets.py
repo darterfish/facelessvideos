@@ -5,8 +5,11 @@ import subprocess
 import sys
 from datetime import date
 import shutil
-import os
 import requests
+import os
+from redis import Redis
+from rq import Queue
+from rq.job import Job
 
 app = Flask(__name__)
 DATA_DIR = Path("data")
@@ -352,6 +355,40 @@ Return ONLY the optimized script with line breaks after each sentence. No additi
     
     return enhanced_blocks
 
+# ---- Background job helpers (for Render Redis + RQ) ----
+import os
+from redis import Redis
+from rq import Queue
+from rq.job import Job
+
+def get_rq_queue():
+    redis_url = os.environ.get("REDIS_URL")
+    if not redis_url:
+        return None
+    conn = Redis.from_url(redis_url)
+    return Queue("default", connection=conn)
+
+def run_pipeline_job(shorts_file: str):
+    """
+    Background job: run the full pipeline using the shorts JSON already written to disk.
+    """
+    import sys
+    import subprocess
+
+    print("\n🎤 Starting audio generation...")
+    subprocess.run([sys.executable, "audio_engine/tts.py"], check=True)
+
+    print("\n📝 Starting caption generation...")
+    subprocess.run([sys.executable, "caption_engine/make_srt.py"], check=True)
+
+    print("\n🔄 Rewrapping captions...")
+    subprocess.run([sys.executable, "caption_engine/rewrap_srt.py"], check=True)
+
+    print("\n🎬 Rendering videos...")
+    subprocess.run([sys.executable, "visual_engine/render_short.py"], check=True)
+
+    print("\n✅ Pipeline completed!")
+    return {"status": "success", "message": "Videos created successfully!", "shorts_file": shorts_file}
 
 
 @app.route('/')
@@ -745,20 +782,18 @@ def process():
             snippets_file.unlink()
         
         # Run pipeline
-        print("\n🎤 Starting audio generation...")
-        subprocess.run([sys.executable, "audio_engine/tts.py"], check=True)
-        
-        print("\n📝 Starting caption generation...")
-        subprocess.run([sys.executable, "caption_engine/make_srt.py"], check=True)
-        
-        print("\n🔄 Rewrapping captions...")
-        subprocess.run([sys.executable, "caption_engine/rewrap_srt.py"], check=True)
-        
-        print("\n🎬 Rendering videos...")
-        subprocess.run([sys.executable, "visual_engine/render_short.py"], check=True)
-        
-        print("\n✅ Pipeline completed!")
-        return jsonify({"status": "success", "message": "Videos created successfully!"})
+        q = get_rq_queue()
+
+        # If no Redis configured (local), run inline
+        if q is None:
+            print("⚠️  REDIS_URL not set; running pipeline inline (local mode).")
+            run_pipeline_job(str(shorts_file))
+            return jsonify({"status": "success", "message": "Videos created successfully!"})
+
+        # On Render: enqueue background job
+        job = q.enqueue(run_pipeline_job, str(shorts_file), job_timeout=3600)  # 1 hour
+        print(f"🧵 Enqueued pipeline job: {job.id}")
+        return jsonify({"status": "queued", "job_id": job.id})
         
     except subprocess.CalledProcessError as e:
         print(f"\n❌ Pipeline failed: {e}")
@@ -774,10 +809,14 @@ def process():
         if temp_dir.exists():
             for json_file in temp_dir.glob("*.json"):
                 try:
+                    if json_file == shorts_file:
+                        print(f"   Kept: {json_file.name} (needed for background job)")
+                        continue
                     json_file.unlink()
                     print(f"   Deleted: {json_file.name}")
                 except Exception as e:
                     print(f"   Failed to delete {json_file.name}: {e}")
+
         
         # Clean up model debug files
         for debug_file in DATA_DIR.glob("_last_model_output*.txt"):
@@ -786,7 +825,23 @@ def process():
                 print(f"   Deleted: {debug_file.name}")
             except Exception as e:
                 print(f"   Failed to delete {debug_file.name}: {e}")
-                
+   
+@app.route("/job/<job_id>", methods=["GET"])
+def job_status(job_id):
+    q = get_rq_queue()
+    if q is None:
+        return jsonify({"status": "error", "message": "REDIS_URL not set"}), 400
+
+    job = Job.fetch(job_id, connection=q.connection)
+
+    resp = {"id": job.id, "status": job.get_status()}
+    if job.is_finished:
+        resp["result"] = job.result
+    if job.is_failed:
+        resp["error"] = (job.exc_info or "failed")[-1000:]
+    return jsonify(resp)
+    
+
 @app.route('/download-videos', methods=['GET'])
 def download_videos():
     """Create a ZIP file of all generated videos and send to user"""
