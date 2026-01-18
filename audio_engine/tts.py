@@ -3,6 +3,7 @@ import os
 import subprocess
 from pathlib import Path
 from typing import Dict, Any
+import sys
 
 VOICE_DIR = Path("assets/piper_voice")
 
@@ -24,12 +25,13 @@ def tts_to_wav(text: str, out_wav: Path, voice_model: str, speech_speed: float =
     
     if not model_path.exists():
         raise FileNotFoundError(f"Voice model not found: {model_path}")
-        
+
     # length_scale is inversely related to speed
     length_scale = 1.0 / speech_speed
     
+
     cmd = [
-        "piper",
+        sys.executable, "-m", "piper",
         "--model", str(model_path),
         "--output_file", str(out_wav),
         "--sentence_silence", "0.3",
