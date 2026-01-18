@@ -49,3 +49,8 @@ __pycache__/
 
 # Logs
 *.log
+
+# Ignore local env + big assets
+.venv/
+assets/backgrounds/*.mp4
+assets/piper_voice/*.onnx
