@@ -598,10 +598,7 @@ def save():
         traceback.print_exc()
         return jsonify({"status": "error", "message": str(e)}), 500
 
-Step 3: Update Backend /ai-enhance Route
-File: review_snippets.py
-Find the /ai-enhance route (around line 270). Replace the entire function with:
-python@app.route('/ai-enhance', methods=['POST'])
+app.route('/ai-enhance', methods=['POST'])
 def ai_enhance():
     """Run AI enhancement on all blocks using local Ollama or online AI providers"""
     blocks = request.json.get('blocks', [])
