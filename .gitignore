@@ -19,3 +19,33 @@ assets/piper_voice/
 
 # OS
 .DS_Store
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+
+# Media / large outputs
+*.mp4
+*.mov
+*.wav
+*.mp3
+
+# Models / binaries
+*.onnx
+*.dylib
+*.so
+*.bin
+*.pt
+*.pth
+
+# Logs
+*.log
