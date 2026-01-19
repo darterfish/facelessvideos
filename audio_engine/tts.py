@@ -4,6 +4,7 @@ import subprocess
 from pathlib import Path
 from typing import Dict, Any
 import sys
+import argparse
 
 VOICE_DIR = Path("assets/piper_voice")
 
@@ -46,25 +47,37 @@ def tts_to_wav(text: str, out_wav: Path, voice_model: str, speech_speed: float =
         print(f"  Piper stderr for {out_wav.name}: {stderr_text[:200]}")
 
 def main():
-    # Reads from temp directory
-    json_files = sorted(Path("data/temp").glob("shorts_*.json"), key=lambda p: p.stat().st_mtime)
-    if not json_files:
-        raise FileNotFoundError("No data/temp/shorts_*.json found. Run generate_scripts.py first.")
-    json_path = json_files[-1]
-    
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", type=str, default="", help="Path to shorts JSON to use")
+    args = parser.parse_args()
+
+    # Determine which JSON file to use
+    if args.input:
+        json_path = Path(args.input)
+        if not json_path.exists():
+            raise FileNotFoundError(f"--input file not found: {json_path}")
+    else:
+        json_files = sorted(Path("data/temp").glob("shorts_*.json"), key=lambda p: p.stat().st_mtime)
+        if not json_files:
+            raise FileNotFoundError("No data/temp/shorts_*.json found. Run generate_scripts.py first.")
+        json_path = json_files[-1]
+
     print(f"📂 Reading shorts from: {json_path}")
-    
+
     with open(json_path, "r", encoding="utf-8") as f:
         payload: Dict[str, Any] = json.load(f)
 
     date_str = payload.get("date", "unknown-date")
     out_dir = Path("output") / date_str / "audio"
 
-    # ADD THIS: Clean audio directory before generating new files
+    # Clean audio directory before generating new files
     if out_dir.exists():
         import shutil
         print(f"🗑️  Cleaning old audio files from {out_dir}")
         shutil.rmtree(out_dir)
+
     out_dir.mkdir(parents=True, exist_ok=True)
 
     shorts = payload.get("shorts", [])
@@ -74,22 +87,21 @@ def main():
     for s in shorts:
         sid = s["id"]
         script = s["voice_script"].strip()
-        voice_model = s.get("voice_model", find_voice_model().name)  # Get voice from short or use first available
+        voice_model = s.get("voice_model", find_voice_model().name)
         speech_speed = float(s.get("speech_speed", "1.0"))
         out_wav = out_dir / f"{sid}.wav"
-        
-        # Debug: print script details
+
         voice_display = voice_model.replace('.onnx', '')
         print(f"📝 {sid}: {len(script)} chars, ~{len(script.split())} words, voice: {voice_display}, speed: {speech_speed}x")
-        
+
         tts_to_wav(script, out_wav=out_wav, voice_model=voice_model, speech_speed=speech_speed)
-        
-        # Debug: check output file duration
+
         probe = subprocess.run(
-            ["ffprobe", "-i", str(out_wav), "-show_entries", 
+            ["ffprobe", "-i", str(out_wav), "-show_entries",
              "format=duration", "-v", "quiet", "-of", "csv=p=0"],
             capture_output=True, text=True
         )
+
         if probe.returncode == 0:
             duration = float(probe.stdout.strip())
             print(f"✅ {sid}: {out_wav} ({duration:.2f}s)")
@@ -97,6 +109,7 @@ def main():
             print(f"✅ {sid}: {out_wav}")
 
     print(f"\nDone. Audio in: {out_dir}")
+
 
 if __name__ == "__main__":
     main()

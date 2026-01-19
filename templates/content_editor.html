@@ -807,21 +807,60 @@ function aiEnhance() {
                 }
                 return response.json();
             })
+            
             .then(function(data) {
-                showStatus(data.message, false);
-                btn.textContent = '✅ Complete';
-                
-                // Show completion message with "Process Another" button
-                document.getElementById('completion-message').style.display = 'block';
-                
-                // Scroll to completion message
-                document.getElementById('completion-message').scrollIntoView({ behavior: 'smooth' });
+                // We only need /continue to save+write the shorts JSON.
+                showStatus('Saved. Rendering videos one at a time…', false);
+
+                // Render sequentially: 1,2,3,...
+                const totalToRender = snippets.length; // only non-excluded snippets
+                let idx = 1;
+
+                function doOne() {
+                    btn.textContent = `⏳ Rendering video ${idx} of ${totalToRender}...`;
+
+                    fetch('/render-one', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ index: idx })
+                    })
+                    .then(function(r) { return r.json(); })
+                    .then(function(res) {
+                        if (res.status === 'done') {
+                            btn.textContent = '✅ Complete';
+                            document.getElementById('completion-message').style.display = 'block';
+                            document.getElementById('completion-message').scrollIntoView({ behavior: 'smooth' });
+                            return;
+                        }
+
+                        if (res.status !== 'success') {
+                            showStatus('Error rendering video ' + idx + ': ' + (res.message || 'unknown error'), true);
+                            btn.disabled = false;
+                            btn.textContent = '▶️ Make Videos';
+                            return;
+                        }
+
+                        // Trigger download for this one
+                        window.open(res.download_url, '_blank');
+
+                        // Next
+                        idx = res.next_index;
+                        doOne();
+                    })
+                    .catch(function(err) {
+                        showStatus('Error rendering video ' + idx, true);
+                        btn.disabled = false;
+                        btn.textContent = '▶️ Make Videos';
+                    });
+                }
+
+                doOne();
             })
 
             .catch(function(error) {
                 showStatus('Error running pipeline', true);
                 btn.disabled = false;
-                btn.textContent = '▶️ Save & Continue Pipeline';
+                btn.textContent = '▶️ Make Videos';
             });
         }
 

@@ -382,7 +382,7 @@ def run_pipeline_job(shorts_file: str):
     subprocess.run([sys.executable, "caption_engine/make_srt.py"], check=True)
 
     print("\n🔄 Rewrapping captions...")
-    subprocess.run([sys.executable, "caption_engine/rewrap_srt.py"], check=True)
+    subprocess.run([sys.executable, "caption_engine/rewrap_srt.py", "--input", str(one_file)], check=True)
 
     print("\n🎬 Rendering videos...")
     subprocess.run([sys.executable, "visual_engine/render_short.py"], check=True)
@@ -782,19 +782,16 @@ def process():
             snippets_file.unlink()
         
         # Run pipeline
-        q = get_rq_queue()
-
-        # If no Redis configured (local), run inline
-        if q is None:
-            print("⚠️  REDIS_URL not set; running pipeline inline (local mode).")
-            run_pipeline_job(str(shorts_file))
-            return jsonify({"status": "success", "message": "Videos created successfully!"})
-
-        # On Render: enqueue background job
-        job = q.enqueue(run_pipeline_job, str(shorts_file), job_timeout=3600)  # 1 hour
-        print(f"🧵 Enqueued pipeline job: {job.id}")
-        return jsonify({"status": "queued", "job_id": job.id})
-        
+        # Do NOT run the pipeline here.
+        # /continue is now "prepare only" so the UI can call /render-one sequentially.
+        short_count = len(shorts_data["shorts"])
+        return jsonify({
+            "status": "ready",
+            "message": f"Prepared {short_count} shorts. Ready to render one at a time.",
+            "count": short_count,
+            "next_index": 1
+        })
+                
     except subprocess.CalledProcessError as e:
         print(f"\n❌ Pipeline failed: {e}")
         return jsonify({"status": "error", "message": f"Pipeline failed: {str(e)}"}), 500
@@ -810,7 +807,7 @@ def process():
             for json_file in temp_dir.glob("*.json"):
                 try:
                     if json_file == shorts_file:
-                        print(f"   Kept: {json_file.name} (needed for background job)")
+                        print(f"   Kept: {json_file.name} (needed for /render-one)")
                         continue
                     json_file.unlink()
                     print(f"   Deleted: {json_file.name}")
@@ -826,6 +823,76 @@ def process():
             except Exception as e:
                 print(f"   Failed to delete {debug_file.name}: {e}")
    
+@app.route('/render-one', methods=['POST'])
+def render_one():
+    """
+    Render exactly ONE short by index.
+    Expects JSON: { "index": 1 }  # 1-based (1 = S001)
+    """
+    import sys, subprocess, json
+    from pathlib import Path
+    from datetime import date
+
+    idx = int(request.json.get("index", 1))
+    date_str = str(date.today())
+
+    # Find the most recent shorts json
+    temp_dir = Path("data/temp")
+
+    # Use the MASTER shorts file from /continue, not the per-item shorts_one_ file
+    shorts_files = sorted(
+        [p for p in temp_dir.glob("shorts_*.json") if not p.name.startswith("shorts_one_")],
+        key=lambda p: p.stat().st_mtime,
+        reverse=True
+    )
+
+    if not shorts_files:
+        return jsonify({"status": "error", "message": "No master shorts file found. Run /continue first."}), 400
+
+    shorts_file = shorts_files[0]
+
+    # Load shorts
+    payload = json.loads(shorts_file.read_text(encoding="utf-8"))
+    shorts = payload.get("shorts", [])
+    if idx < 1 or idx > len(shorts):
+        return jsonify({"status": "done", "message": "All videos rendered."})
+
+    # Write a single-short file for the engines to use
+    one_payload = dict(payload)
+    one_payload["shorts"] = [shorts[idx - 1]]
+    one_file = temp_dir / f"shorts_one_{date.today().isoformat()}.json"
+    one_file.write_text(json.dumps(one_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    # Run pipeline (1 short only)
+    subprocess.run([sys.executable, "audio_engine/tts.py", "--input", str(one_file)], check=True)
+    subprocess.run([sys.executable, "caption_engine/make_srt.py", "--input", str(one_file)], check=True)
+    subprocess.run([sys.executable, "caption_engine/rewrap_srt.py", "--input", str(one_file)], check=True)
+    subprocess.run([sys.executable, "visual_engine/render_short.py", "--input", str(one_file)], check=True)
+
+    # Video path (your render_short.py usually writes to output/<date>/video/)
+    video_dir = Path("output") / date_str / "video"
+    vids = sorted(video_dir.glob("*.mp4"), key=lambda p: p.stat().st_mtime, reverse=True)
+    if not vids:
+        return jsonify({"status": "error", "message": "Rendered but no mp4 found"}), 500
+
+    latest = vids[0].name
+    return jsonify({
+        "status": "success",
+        "message": f"Rendered {shorts[idx-1].get('id','S???')}",
+        "index_rendered": idx,
+        "next_index": idx + 1,
+        "filename": latest,
+        "download_url": f"/download-video/{latest}"
+    })
+
+@app.route('/download-video/<filename>', methods=['GET'])
+def download_video(filename):
+    from flask import send_from_directory
+    from datetime import date
+    video_dir = Path("output") / str(date.today()) / "video"
+    return send_from_directory(video_dir, filename, as_attachment=True)
+
+
 @app.route("/job/<job_id>", methods=["GET"])
 def job_status(job_id):
     q = get_rq_queue()
@@ -840,7 +907,7 @@ def job_status(job_id):
     if job.is_failed:
         resp["error"] = (job.exc_info or "failed")[-1000:]
     return jsonify(resp)
-    
+
 
 @app.route('/download-videos', methods=['GET'])
 def download_videos():

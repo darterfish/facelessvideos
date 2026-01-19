@@ -1,8 +1,10 @@
 # caption_engine/make_srt.py
 import json
 import subprocess
+import argparse
 from pathlib import Path
 from typing import List, Tuple
+
 
 def get_audio_duration(audio_path: Path) -> float:
     """Get duration of audio file in seconds"""
@@ -65,38 +67,53 @@ def format_timestamp(seconds: float) -> str:
     return f"{hours:02d}:{minutes:02d}:{secs:02d},{millis:03d}"
 
 def main():
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", type=str, default="", help="Path to shorts JSON to use")
+    args = parser.parse_args()
+
+    # Determine which JSON file to use
+    if args.input:
+        json_path = Path(args.input)
+        if not json_path.exists():
+            raise FileNotFoundError(f"--input file not found: {json_path}")
+    else:
+        json_files = sorted(Path("data/temp").glob("shorts_*.json"), key=lambda p: p.stat().st_mtime)
+        if not json_files:
+            raise FileNotFoundError("No data/temp/shorts_*.json found. Run generate_scripts.py first.")
+        json_path = json_files[-1]
+
+    print(f"📂 Using shorts file: {json_path}")
+
     # Read shorts JSON to get the original scripts
-    json_files = sorted(Path("data/temp").glob("shorts_*.json"), key=lambda p: p.stat().st_mtime)
-    if not json_files:
-        raise FileNotFoundError("No data/temp/shorts_*.json found. Run generate_scripts.py first.")
-    json_path = json_files[-1]
-    
     with open(json_path, "r", encoding="utf-8") as f:
         payload = json.load(f)
-    
+
     date_str = payload.get("date", "unknown-date")
     audio_dir = Path("output") / date_str / "audio"
     srt_dir = Path("output") / date_str / "captions"
     srt_dir.mkdir(parents=True, exist_ok=True)
-    
+
     for short in payload.get("shorts", []):
         sid = short["id"]
         script = short["voice_script"].strip()
-        
+
         audio_file = audio_dir / f"{sid}.wav"
         srt_file = srt_dir / f"{sid}.srt"
-        
+
         if not audio_file.exists():
             print(f"⚠️  Audio not found: {audio_file}")
             continue
-        
+
         # Get audio duration
         duration = get_audio_duration(audio_file)
-        
+
         # Create SRT from original script text
         create_srt_from_text(script, duration, srt_file)
-        
+
         print(f"✅ {sid}: {srt_file} ({duration:.2f}s, {len(script.split())} words)")
+
 
 if __name__ == "__main__":
     main()
